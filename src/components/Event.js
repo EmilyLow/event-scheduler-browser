@@ -15,10 +15,15 @@ const useStyles = makeStyles((theme) => ({
 
 function Event({details}) {
 
+  let startDate = new Date(details.start_time);
+  let endDate = new Date(details.end_time);
+
+  // console.log("Details: ", details);
+  // console.log("startDate " + startDate);
 
 
-    let startTime = details.startTime.getHours() +(details.startTime.getMinutes() /60);
-    let endTime = details.endTime.getHours() + (details.endTime.getMinutes() / 60);
+    let startTime = startDate.getHours() +(startDate.getMinutes() /60);
+    let endTime = endDate.getHours() + (endDate.getMinutes() / 60);
     let length = endTime - startTime;
 
     const classes = useStyles();
@@ -37,8 +42,9 @@ function Event({details}) {
     const id = open ? "simple-popover" : undefined;
 
     return(
+      
         <EventStyle details={details} startTime = {startTime} endTime = {endTime} length = {length}>
-            <Label onClick={handleClick}>{details.name}</Label>
+            <Label onClick={handleClick}>{details.event_name}</Label>
             <Popover
           id={id}
           open={open}
@@ -66,7 +72,7 @@ function Event({details}) {
 
 
 const EventStyle = styled.div`
-    grid-column: ${(props) => props.details.startCol} / span ${(props) => props.details.span};
+    grid-column: ${(props) => props.details.start_col} / span ${(props) => props.details.span};
     grid-row: ${(props) => (props.startTime -9) * 4 + 2} / span ${(props) => (props.length * 4)};
     background-color: ${(props) => props.details.color};
 

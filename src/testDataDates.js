@@ -21,6 +21,13 @@ let testData = {
             startCol: 2,
             span: 12,
             color: "#A3F8A3" //green
+
+            //Month
+            //Day
+            //start_hour
+            //start_minute
+            //end_hour
+            //end_minute
         }, 
         {
             name: "Meet and Greet",

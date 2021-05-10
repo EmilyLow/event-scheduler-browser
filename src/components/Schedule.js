@@ -1,9 +1,33 @@
 import styled from "styled-components";
+import axios from 'axios';
+import { useEffect, useState } from "react";
 
 import testDataDates from "../testDataDates";
 import Event from "./Event";
 
 function Schedule() {
+
+    const [eventsList, setEventsList] = useState([]);
+
+    const url = 'http://localhost:3001/events';
+
+  useEffect(() => {
+    getEvents();
+
+  }, []);
+
+  
+
+  const getEvents = () => {
+    axios.get(url)
+    .then((response => {
+
+      setEventsList(response.data);
+      console.log(eventsList);
+
+    }))
+    .catch(error => console.error(`Error: ${error}`))
+  }
 
     const days = [
         'Sun',
@@ -82,9 +106,14 @@ function Schedule() {
             {dayLabels}
             {hourLabels}
             {hours}
-            {testDataDates.events.map(listing => {
+            {/* {testDataDates.events.map(listing => {
                 return <Event key = {listing.name + listing.startTime.getTime() + listing.endTime.getTime() + listing.startCol} details = {listing}/>;
-            })}
+            })} */}
+             {eventsList.map(listing => { 
+                    return <Event key = {listing.id} details = {listing}/>;
+                 })}
+                 
+                
         </ScheduleContainer>
     );
 }
