@@ -57,6 +57,7 @@ let testData = {
         },
      
         {
+           
             name: "Merchants",
             speaker: "",
             summary: "Curabitur ac egestas tortor",
@@ -69,6 +70,7 @@ let testData = {
             color: "#A8EBF3" //blue
         },
         {
+           
             name: "Talk",
             speaker: "Dr. Grace Clayton",
             summary: "",
@@ -81,6 +83,7 @@ let testData = {
             color: "#ffec6e" //yellow
         },
         {
+           
             name: "Food Trucks",
             speaker: "",
             summary: "",

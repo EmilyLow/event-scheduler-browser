@@ -23,8 +23,7 @@ function Schedule() {
     .then((response => {
 
       setEventsList(response.data);
-      console.log(eventsList);
-
+        console.log(response.data);
     }))
     .catch(error => console.error(`Error: ${error}`))
   }
