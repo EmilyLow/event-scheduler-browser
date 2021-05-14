@@ -15,6 +15,8 @@ const useStyles = makeStyles((theme) => ({
 
 function Event({details}) {
 
+
+
   let startDate = new Date(details.start_time);
   let endDate = new Date(details.end_time);
 
@@ -62,7 +64,7 @@ function Event({details}) {
             style: { width: '300px' },
           }}
         >
-            <ContentPane details = {details}/>
+            <ContentPane details = {details} startTime = {startDate} endTime = {endDate}/>
                
          
         </Popover>
