@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     },
   }));
 
-  function SettingsForm() {
+  function SettingsForm({setSettings}) {
       //{settings, setSettings}
     // console.log("Settings Form date: ", settings.startDate.getDate());
 
@@ -28,13 +28,15 @@ const useStyles = makeStyles(theme => ({
    const onSubmit = data => {
        
         console.log("Data: ", data);
-        // let settingsData = data;
-        // let startDate = new Date(data.calStartDate);
-        // console.log(startDate);
-        // let date = new Date(data.)
-        // settingsData = {...data, }
-        // setSettings(data);
-        // console.log("Post set settings: ", settings);
+        let settingsData = data;
+        //The T00:00 serves to put the date in local time
+        let enteredDate = new Date(data.calStartDate + "T00:00");
+       setSettings({ 
+        dayNum: data.dayNumber,
+        hourNum: data.dayLength,
+        startHour: data.schedStartTime,
+        startDate: enteredDate
+      });
 
     };  
 
@@ -60,7 +62,7 @@ const useStyles = makeStyles(theme => ({
                 />
 
                 <Controller
-                name="day-number"
+                name="dayNumber"
                 control={control}
                 defaultValue="3"
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
@@ -78,13 +80,13 @@ const useStyles = makeStyles(theme => ({
                 />
 
                 <Controller
-                name="sched-start-time"
+                name="schedStartTime"
                 control={control}
-                defaultValue="09:00"
+                defaultValue="9"
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <TextField
                 label="Schedule Start Time"
-                type="time"
+                type="number"
                 variant="filled"
                 value={value}
                 onChange={onChange}
@@ -95,7 +97,7 @@ const useStyles = makeStyles(theme => ({
                 rules={{ required: 'Start time required' }}
                 />
                 <Controller
-                name="day-length"
+                name="dayLength"
                 control={control}
                 defaultValue="12"
                 render={({ field: { onChange, value }, fieldState: { error } }) => (

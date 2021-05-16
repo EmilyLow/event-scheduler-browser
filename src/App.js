@@ -13,12 +13,12 @@ function App() {
     dayNum: 3,
     hourNum: 13,
     startHour: 9,
-    startDate: new Date(2021, 4, 7),
-    testDate: new Date(2020, 1, 1)
+    startDate: new Date(2021, 4, 7)
   });
-  console.log("Settings date: ", settings.startDate.getDate());
+ 
+  console.log("App settings", settings);
 
-  
+
 
   return (
     <LayoutDiv>
@@ -27,7 +27,7 @@ function App() {
         <Schedule settings = {settings}/>
       </ScheduleDiv>
       <FormDiv>
-        <SettingsForm/>
+        <SettingsForm setSettings={setSettings}/>
         <InputForm/>
       </FormDiv>
       
