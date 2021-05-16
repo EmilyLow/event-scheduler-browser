@@ -11,7 +11,7 @@ function Schedule(props) {
 
     let {settings} = props;
     // console.log("Settings Schedule date: ", settings.startDate.getDate());
-    console.log("Settings: ", settings);
+    // console.log("Settings: ", settings);
 
 
     const [eventsList, setEventsList] = useState([]);
@@ -20,17 +20,58 @@ function Schedule(props) {
 
   useEffect(() => {
     getEvents();
+    
 
   }, []);
 
+  //!Why this does't work feels worth figuring out for later
+//   useEffect(() => {
+//       console.log(eventsList);
+//   }, eventsList);
+
+  function organizeEvents(rawEvents) {
+    //Assume they have already been selected for correct day
+    rawEvents.forEach(event => {
+        console.log(event);
+    })
+  }
   
+  const convertToDate = (rawEvents) => {
+      let postEvents = [];
+
+      rawEvents.forEach(event => {
+        //   console.log(event);
+          let newEvent = {...event};
+            
+            newEvent.start_time = new Date(event.start_time);
+            newEvent.end_time = new Date(event.end_time);
+            // console.log(newEvent);
+            postEvents.push(newEvent);
+      })
+      return postEvents;
+  }
 
   const getEvents = () => {
     axios.get(url)
     .then((response => {
+    //   console.log(response.data);
 
-      setEventsList(response.data);
-        // console.log(response.data);
+
+      setEventsList(convertToDate(response.data));
+        
+        
+    }))
+    .catch(error => console.error(`Error: ${error}`))
+  }
+
+  const getEventsOnDay = () => {
+      //Day in format 2021-08-21 
+    axios.get(url)
+    .then((response => {
+      
+      console.log(response);
+        
+        
     }))
     .catch(error => console.error(`Error: ${error}`))
   }

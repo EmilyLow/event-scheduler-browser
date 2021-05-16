@@ -17,16 +17,16 @@ function Event({details}) {
 
 
 
-  let startDate = new Date(details.start_time);
-  let endDate = new Date(details.end_time);
+  // let details.start_time = new Date(details.start_time);
+  // let details.end_time = new Date(details.end_time);
 
   // console.log("Details: ", details);
-  // console.log("startDate " + startDate);
+  // console.log("details.start_time " + details.start_time);
 
 
-    let startTime = startDate.getHours() +(startDate.getMinutes() /60);
-    let endTime = endDate.getHours() + (endDate.getMinutes() / 60);
-    let length = endTime - startTime;
+    let startTimeValue = details.start_time.getHours() +(details.start_time.getMinutes() /60);
+    let endTimeValue = details.end_time.getHours() + (details.end_time.getMinutes() / 60);
+    let length = endTimeValue - startTimeValue;
 
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -45,7 +45,7 @@ function Event({details}) {
 
     return(
       
-        <EventStyle details={details} startTime = {startTime} endTime = {endTime} length = {length}>
+        <EventStyle details={details} startTimeValue = {startTimeValue} endTimeValue = {endTimeValue} length = {length}>
             <Label onClick={handleClick}>{details.event_name}</Label>
             <Popover
           id={id}
@@ -64,7 +64,7 @@ function Event({details}) {
             style: { width: '300px' },
           }}
         >
-            <ContentPane details = {details} startTime = {startDate} endTime = {endDate}/>
+            <ContentPane details = {details} startTimeValue = {details.start_time} endTimeValue = {details.end_time}/>
                
          
         </Popover>
@@ -75,7 +75,7 @@ function Event({details}) {
 
 const EventStyle = styled.div`
     grid-column: ${(props) => props.details.start_col} / span ${(props) => props.details.span};
-    grid-row: ${(props) => (props.startTime -9) * 4 + 2} / span ${(props) => (props.length * 4)};
+    grid-row: ${(props) => (props.startTimeValue -9) * 4 + 2} / span ${(props) => (props.length * 4)};
     background-color: ${(props) => props.details.color};
 
     display: flex;

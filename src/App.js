@@ -16,7 +16,7 @@ function App() {
     startDate: new Date(2021, 4, 7)
   });
  
-  console.log("App settings", settings);
+  // console.log("App settings", settings);
 
 
 

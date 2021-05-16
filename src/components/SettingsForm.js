@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 
    const onSubmit = data => {
        
-        console.log("Data: ", data);
+        // console.log("Data: ", data);
         let settingsData = data;
         //The T00:00 serves to put the date in local time
         let enteredDate = new Date(data.calStartDate + "T00:00");
