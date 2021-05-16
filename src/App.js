@@ -1,7 +1,8 @@
 import styled from "styled-components";
 
 import Schedule from "./components/Schedule";
-
+import InputForm from "./components/InputForm";
+import SettingsForm from "./components/SettingsForm";
 
 
 function App() {
@@ -10,12 +11,17 @@ function App() {
 
 
   return (
-    <ScheduleDiv>
+    <LayoutDiv>
+      <ScheduleDiv>
         <StyledH1>Convention Schedule</StyledH1>
         <Schedule/>
+      </ScheduleDiv>
+      <FormDiv>
+        <SettingsForm/>
+        <InputForm/>
+      </FormDiv>
       
-      
-    </ScheduleDiv>
+    </LayoutDiv>
   );
 }
 
@@ -30,4 +36,17 @@ const ScheduleDiv = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+
+const FormDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const LayoutDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+
+
 `;
