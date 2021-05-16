@@ -29,12 +29,170 @@ function Schedule(props) {
 //       console.log(eventsList);
 //   }, eventsList);
 
-  function organizeEvents(rawEvents) {
-    //Assume they have already been selected for correct day
+
+//I don't think this will work so ignoring it for now
+  function defunctOrganizeEvents(rawEvents, targetDate) {
+
+    //! Need to create a "clean" version of array. One without col info
+    let cleanEvents = [];
     rawEvents.forEach(event => {
-        console.log(event);
+        let newEvent = {...event, start_col: 0, span: 0};
+        cleanEvents.push(newEvent);
     })
+
+    //Assume they have already been selected for correct day
+    let dayNum = dateDiff(settings.startDate, targetDate);
+    let colOffset = 2;
+    let baseColumn = dayNum * 12 + colOffset;
+    const targetCopy = new Date(targetDate);
+    //May not be necessary
+    targetCopy.setMinutes(0);
+    targetCopy.setHours(0);
+    let hoursArray = [];
+    //Create a date for each hour of the day
+    for (let i = 0; i < settings.hourNum; i++) {
+        let hour = new Date(targetCopy);
+        hour.setHours(settings.startHour + i);
+        hoursArray.push(hour);
+    }
+    // console.log(hoursArray);
+    
+    //Since on hour mark, I'll say it intersects at start of hour, but not at end
+    for(let i = 0; i < hoursArray.length; i++) {
+        let intersects = [];
+
+        cleanEvents.forEach(event => {
+            //This works but creates a problem. Food trucks and talk both intersect merchants without intersecting each other
+        //Creating a false (3). So I think it makes sense to check at moments and not ranges?
+            // let hoursPlus = new Date(hoursArray[i]);
+            // hoursPlus.setHours(hoursPlus.getHours() +1);
+            // if(event.start_time < hoursPlus && event.end_time > hoursArray[i]) {
+            //     intersects.push(event);
+            // } 
+
+            if(event.start_time <= hoursArray[i] && event.end_time > hoursArray[i]) {
+                intersects.push(event);
+                //! Wait, I need to include the index and not the actual event
+                //Or something
+            }
+            
+        })
+        // console.log("For hour :", hoursArray[i].getHours());
+        // console.log("Intersects are", intersects);
+        let numInt = intersects.length;
+        for(let j = 0; j < numInt; j++) {
+            if(intersects.length == 1) {
+
+            }
+        }
+    }
+
   }
+
+  function checkIntersect(event1, event2) {
+      let maxStart = max(event1.start_time, event2.start_time);
+      let minEnd = min(event1.end_time, event2.end_time);
+
+      if(maxStart <= minEnd) {
+          return true;
+      } else {
+          return false;
+      }
+  }
+
+  function max(date1, date2) {
+    if(date1 > date2) {
+        return date1;
+    } else {
+        return date2;
+    }
+  }
+
+  function min(date1, date2) {
+    if(date1 < date2) {
+        return date1;
+    } else {
+        return date2;
+    }
+  }
+
+
+  //Note! Currently thinks foodTrucks and talk intersect. 
+  //They probably technically do, on the last minute.
+  //So I should get it to not count things that start and end at the exact same time as intersecting
+  
+  function organizeEvents(rawEvents, targetDate) {
+    let dayNum = dateDiff(settings.startDate, targetDate);
+    let colOffset = 2;
+    let baseColumn = dayNum * 12 + colOffset;
+
+    let cleanEvents = [];
+    rawEvents.forEach(event => {
+        let newEvent = {...event, start_col: 0, span: 0};
+        cleanEvents.push(newEvent);
+    });
+
+    let addedEvents = [];
+
+    for(let i = 0; i < cleanEvents.length; i++) {
+        
+        let intIndex = [];
+        for(let j = 0; j < addedEvents.length; j++) {
+            if(checkIntersect(cleanEvents[i], addedEvents[j])) {
+                intIndex.push(j);
+            }
+        }
+        
+        //Verified the if works
+        if(intIndex.length === 0) {
+            cleanEvents[i].span = 12;
+            cleanEvents[i].start_col = baseColumn;
+            addedEvents.push(cleanEvents[i]);
+        } else {
+            let defaultSpan = 12/(intIndex.length +1);
+            for(let j = 0; j < intIndex.length ; j++) {
+                let addedIndex = intIndex[j];
+                let intEvent = addedEvents[addedIndex];
+
+                //This is where it starts to get iffy
+                //Later will need to come back and add case for when events > 4
+                
+
+                //Just going to pretend that the latest col-position is always best first
+
+                //Possibly I'm editing a copy here
+                //Makes the span smaller, but not larger
+                if(!(intEvent.span > 0 && intEvent.span < defaultSpan)) {
+                    intEvent.span = defaultSpan;
+                }
+
+                //This will need editing, currently it assumes last is right
+                //Using j here just so they all end up in a different place
+                intEvent.start_col = baseColumn + j * defaultSpan;
+
+            }
+            //Now place the current event
+            cleanEvents[i].span = defaultSpan;
+            cleanEvents[i].start_col = baseColumn + intIndex.length * defaultSpan;
+            addedEvents.push(cleanEvents[i]);
+        }
+    }
+    // console.log(addedEvents);
+    return addedEvents;
+  }
+
+  function dateDiff(first, second) {
+    let firstCopy = new Date(first);
+    let secondCopy = new Date(second);
+
+    firstCopy.setMinutes(0);
+    firstCopy.setHours(0);
+    secondCopy.setMinutes(0);
+    secondCopy.setHours(0);
+
+
+    return Math.round((secondCopy-firstCopy)/(1000*60*60*24));
+}
 
   function getEventsOnDay(rawEvents, targetDate) {
       let month = targetDate.getMonth();
@@ -80,7 +238,12 @@ function Schedule(props) {
       //Do experiments with single day stuff here
       
         let onDay = getEventsOnDay(editedData, new Date(2021, 4, 8));
-        console.log(onDay);
+        // console.log(onDay);
+        let organized = organizeEvents(onDay, new Date(2021, 4, 8));
+        // console.log(organized);
+
+        //Temporarily, just to see it.
+        setEventsList(organized);
         
     }))
     .catch(error => console.error(`Error: ${error}`))
