@@ -35,6 +35,25 @@ function Schedule(props) {
         console.log(event);
     })
   }
+
+  function getEventsOnDay(rawEvents, targetDate) {
+      let month = targetDate.getMonth();
+      let date = targetDate.getDate();
+    
+
+      let eventsOnDay = [];
+
+      rawEvents.forEach(event => {
+        //   console.log(event.start_time.getMonth());
+
+          if(event.start_time.getMonth() === month && event.start_time.getDate() === date) {
+          
+              eventsOnDay.push(event);
+          }
+      })
+
+      return eventsOnDay;
+  }
   
   const convertToDate = (rawEvents) => {
       let postEvents = [];
@@ -54,27 +73,20 @@ function Schedule(props) {
   const getEvents = () => {
     axios.get(url)
     .then((response => {
-    //   console.log(response.data);
-
-
+        let editedData = convertToDate(response.data)
+    
       setEventsList(convertToDate(response.data));
         
+      //Do experiments with single day stuff here
+      
+        let onDay = getEventsOnDay(editedData, new Date(2021, 4, 8));
+        console.log(onDay);
         
     }))
     .catch(error => console.error(`Error: ${error}`))
   }
 
-  const getEventsOnDay = () => {
-      //Day in format 2021-08-21 
-    axios.get(url)
-    .then((response => {
-      
-      console.log(response);
-        
-        
-    }))
-    .catch(error => console.error(`Error: ${error}`))
-  }
+  
 
     const days = [
         'Sun',
