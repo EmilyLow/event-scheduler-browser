@@ -2,10 +2,15 @@ import styled from "styled-components";
 import axios from 'axios';
 import { useEffect, useState } from "react";
 
-import testDataDates from "../testDataDates";
+
 import Event from "./Event";
 
-function Schedule() {
+function Schedule(props) {
+
+    //There has to be a neater way to do this.
+    let settings = props.settings.settings;
+
+
 
     const [eventsList, setEventsList] = useState([]);
 
@@ -23,7 +28,7 @@ function Schedule() {
     .then((response => {
 
       setEventsList(response.data);
-        console.log(response.data);
+        // console.log(response.data);
     }))
     .catch(error => console.error(`Error: ${error}`))
   }
@@ -41,8 +46,7 @@ function Schedule() {
     
     let hours = [];
 
-    let {settings} = testDataDates;
-  
+   
     for (let i = 0; i < settings.dayNum; i++) {
        for (let j = 0; j < settings.hourNum; j++) {
            //Note! Changing from 0 start to 1 start here.

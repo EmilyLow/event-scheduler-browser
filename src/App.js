@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 import styled from "styled-components";
 
 import Schedule from "./components/Schedule";
@@ -7,6 +9,14 @@ import SettingsForm from "./components/SettingsForm";
 
 function App() {
   
+  const [settings, setSettings] = useState({settings: { 
+    dayNum: 3,
+    hourNum: 13,
+    startHour: 9,
+    startDate: new Date(2021, 4, 7),
+    startDate2: 7,
+    days: ["Fri", "Sat", "Sun"]
+  },});
 
 
 
@@ -14,7 +24,7 @@ function App() {
     <LayoutDiv>
       <ScheduleDiv>
         <StyledH1>Convention Schedule</StyledH1>
-        <Schedule/>
+        <Schedule settings = {settings}/>
       </ScheduleDiv>
       <FormDiv>
         <SettingsForm/>
