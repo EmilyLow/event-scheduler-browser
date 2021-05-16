@@ -6,10 +6,12 @@ import { useEffect, useState } from "react";
 import Event from "./Event";
 
 function Schedule(props) {
+    //Note! Date is incrementing by 4 days for some reason. 
 
-    //There has to be a neater way to do this.
-    let settings = props.settings.settings;
 
+    let {settings} = props;
+    // console.log("Settings Schedule date: ", settings.startDate.getDate());
+    console.log("Settings: ", settings);
 
 
     const [eventsList, setEventsList] = useState([]);
@@ -77,7 +79,10 @@ function Schedule(props) {
     // console.log("Settings:", settings)
 
     let dayLabels = [];
-    let labelDate = settings.startDate;
+
+    
+    
+    let labelDate = new Date(settings.startDate.getTime());
     // console.log(labelDate);
     for(let i = 0; i < settings.dayNum; i++) {
         // console.log("No changes" + labelDate);

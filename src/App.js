@@ -9,16 +9,16 @@ import SettingsForm from "./components/SettingsForm";
 
 function App() {
   
-  const [settings, setSettings] = useState({settings: { 
+  const [settings, setSettings] = useState({ 
     dayNum: 3,
     hourNum: 13,
     startHour: 9,
     startDate: new Date(2021, 4, 7),
-    startDate2: 7,
-    days: ["Fri", "Sat", "Sun"]
-  },});
+    testDate: new Date(2020, 1, 1)
+  });
+  console.log("Settings date: ", settings.startDate.getDate());
 
-
+  
 
   return (
     <LayoutDiv>

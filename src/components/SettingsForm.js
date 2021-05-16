@@ -19,15 +19,30 @@ const useStyles = makeStyles(theme => ({
   }));
 
   function SettingsForm() {
+      //{settings, setSettings}
+    // console.log("Settings Form date: ", settings.startDate.getDate());
+
     const classes = useStyles();
     const {handleSubmit, control } = useForm();
-   const onSubmit = data => console.log(data);
+
+   const onSubmit = data => {
+       
+        console.log("Data: ", data);
+        // let settingsData = data;
+        // let startDate = new Date(data.calStartDate);
+        // console.log(startDate);
+        // let date = new Date(data.)
+        // settingsData = {...data, }
+        // setSettings(data);
+        // console.log("Post set settings: ", settings);
+
+    };  
 
     return(
         <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
             <Typography variant={'h5'}>Settings Form</Typography>
                 <Controller
-                name="cal-start-date"
+                name="calStartDate"
                 control={control}
                 defaultValue="2021-04-07"
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
