@@ -6,12 +6,11 @@ import { useEffect, useState } from "react";
 import Event from "./Event";
 
 function Schedule(props) {
-    //Note! Date is incrementing by 4 days for some reason. 
+   
 
 
     let {settings} = props;
-    // console.log("Settings Schedule date: ", settings.startDate.getDate());
-    // console.log("Settings: ", settings);
+   
 
 
     const [eventsList, setEventsList] = useState([]);
@@ -20,7 +19,7 @@ function Schedule(props) {
 
   useEffect(() => {
     getEvents();
-    testMethod();
+    
     
 
   }, []);
@@ -30,125 +29,21 @@ function Schedule(props) {
 //       console.log(eventsList);
 //   }, eventsList);
 
- let testData8 = [{
-    "id": 100,
-    "event_name": "Open Panel",
-    "speaker": "",
-    "summary": "",
-    "location": "Conference Room E",
-    "start_time": "2021-05-08 22:00:00.000Z",
-    "end_time": "2021-05-08 23:30:00.000Z",
-    "start_col": 14,
-    "span": 8,
-    "color": "#B0E5B2"
-  },
-  {
-    "id": 99,
-    "event_name": "Talk E",
-    "speaker": "Dr. Nicholas Carson",
-    "summary": "Etiam ut consequat orci.",
-    "location": "Conference Room A",
-    "start_time": "2021-05-08 21:00:00.000Z",
-    "end_time": "2021-05-08 23:00:00.000Z",
-    "start_col": 22,
-    "span": 4,
-    "color": "#ffec6e"
-  },
-  {
-    "id": 97,
-    "event_name": "Talk C",
-    "speaker": "Dr. Nathaniel Riley",
-    "summary": "",
-    "location": "Conference Room D",
-    "start_time": "2021-05-08 20:00:00.000Z",
-    "end_time": "2021-05-08 22:00:00.000Z",
-    "start_col": 14,
-    "span": 4,
-    "color": "#ffec6e"
-  },
-  {
-    "id": 98,
-    "event_name": "Talk D",
-    "speaker": "Dr. Daniel Parsons ",
-    "summary": "",
-    "location": "Conference Room C",
-    "start_time": "2021-05-08 20:00:00.000Z",
-    "end_time": "2021-05-08 22:00:00.000Z",
-    "start_col": 18,
-    "span": 4,
-    "color": "#ffec6e"
-  }];
 
-  function testMethod() {
-      console.log("Test Method");
 
-    let objects = [ {
-        "id": 49,
-        "event_name": "Opening Ceremony",
-        "speaker": "Eric Delgado",
-        "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        "location": "Lobby",
-        "start_time": "2021-05-07 22:30:00.000Z",
-        "end_time": "2021-05-08 00:00:00.000Z",
-        "start_col": 2,
-        "span": 12,
-        "color": "#A3F8A3"
-      },
-      {
-        "id": 50,
-        "event_name": "Meet and Greet",
-        "speaker": "Lila Tucker",
-        "summary": "Sed vulputate fermentum tellus viverra placerat. Donec vulputate tortor justo, ut congue urna pharetra vel.",
-        "location": "Conference Room A",
-        "start_time": "2021-05-08 00:00:00.000Z",
-        "end_time": "2021-05-08 02:00:00.000Z",
-        "start_col": 2,
-        "span": 6,
-        "color": "#A8EBF3"
-      },
-      {
-        "id": 51,
-        "event_name": "VIP Salon",
-        "speaker": "Lynn Lambert",
-        "summary": "Sed sit amet tempus libero.",
-        "location": "",
-        "start_time": "2021-05-08 00:00:00.000Z",
-        "end_time": "2021-05-08 02:00:00.000Z",
-        "start_col": 8,
-        "span": 6,
-        "color": "#F3B0A8"
-      }];
 
-    let objects2 = convertToDate(objects);
-    // console.log(object2);
-
-    //Error
-    let result = checkPhysicalInt(objects2[2], objects2[1]);
-    //   console.log(result);
-
-    // let timeResult = checkTimeInt(objects2[2], objects2[1]);
-    // console.log(timeResult);
-  }
-  //This checks for an intersection in grid placement.
-  
+  //This checks for an intersection in grid placement. 
   function checkPhysicalInt(event1, event2) {
-    let error = false;
+
     //Error check
     if(event1.start_col === 0 || event2.start_col === 0 || event1.span === 0 || event2.span === 0) {
         console.log("Error! Undefined physical placement");
     }
 
-    if(event1.event_name === "Talk D" && event2.event_name === "Talk E") {
-        error = true;
-    };
-
-
-
-
     if(checkTimeInt(event1, event2) === false) {
         return false;
     } else {
-        //Verified these give correct end values
+        //Subtracted by 0.1 so shared boundaries don't count as intersection.
         let end_col1 = event1.start_col + event1.span - 0.1;
         let end_col2 = event2.start_col + event2.span - 0.1;
 
@@ -156,10 +51,8 @@ function Schedule(props) {
         let minEnd = min(end_col1, end_col2);
 
         if(maxStart <= minEnd) {
-            // if(error) console.log("true");
             return true;
         } else {
-            // if(error) console.log("false");
             return false;
         }
     }
@@ -218,11 +111,9 @@ function Schedule(props) {
     });
 
     let addedEvents = [];
-    //    console.log(cleanEvents[0]);
 
     for(let i = 0; i < cleanEvents.length; i++) {
        
-
         let intIndex = [];
         for(let j = 0; j < addedEvents.length; j++) {
             if(checkTimeInt(cleanEvents[i], addedEvents[j])) {
@@ -230,7 +121,6 @@ function Schedule(props) {
             }
         }
      
-        // console.log(intIndex);
        
         
         //Length of intIndex is the number of intersections
@@ -245,10 +135,10 @@ function Schedule(props) {
              addedEvents.push(cleanEvents[i]);
              intIndex.push(addedEvents.length-1)
 
-             //! New
+  
              let slots = new Array(intIndex.length).fill(0);
            
-            for(let j = 0; j < intIndex.length ; j++) {
+             for(let j = 0; j < intIndex.length ; j++) {
 
                
                 let addedIndex = intIndex[j];
@@ -261,17 +151,6 @@ function Schedule(props) {
                     intEvent.span = defaultSpan;
                 }
 
-                //This will need editing, currently it assumes last is right
-                //Using j here just so they all end up in a different place
-                // intEvent.start_col = baseColumn + j * defaultSpan;
-
-                //Alt version
-                
-                //Check each slot
-                
-               //Place based on empty slots
-               //Put in first empty slot in the array
-               //Note, potential problme where it reaches end of "slots" without finding a valid place. Error message that?
 
               for(let x = 0; x < slots.length; x++) {
                   if(slots[x] === 0) {
@@ -288,34 +167,25 @@ function Schedule(props) {
                     }
                     
                     if (!blocked) {
-                        
-                        //Place event here
-                        //Set columns
-                        
                         //Set slot to full
                         slots[x] = 1;
 
-                        //break
                         break;
                         
                     } else if (x === slots.length -1) {
                         console.log("Error, found no open slot");
-                        console.log("Erorr on: ", intEvent);
+                        // console.log("Erorr on: ", intEvent);
                         intEvent.start_col = origCol;
                     } else {
                         intEvent.start_col = origCol;
                     }
-                    
 
                   }
               }
-            
-
             }
          
         }
     }
-    console.log(addedEvents);
     return addedEvents;
   }
 
@@ -371,25 +241,19 @@ function Schedule(props) {
     axios.get(url)
     .then((response => {
 
-         //!Temporarily removed while messing with algo
-    //   setEventsList(convertToDate(response.data));
-    
-        let editedData = convertToDate(response.data)
 
-        //Using testData to debug
-       let editedData2 = convertToDate(testData8);
-    
-       
-        
-      //Do experiments with single day stuff here
+      setEventsList(convertToDate(response.data));
+
+        // //Code for testing a single day's data
+        // let editedData = convertToDate(response.data)
       
-        let onDay = getEventsOnDay(editedData, new Date(2021, 4, 7));
-        // console.log(onDay);
-        let organized = organizeEvents(onDay, new Date(2021, 4, 7));
-        // console.log(organized);
+      
+        // let onDay = getEventsOnDay(editedData, new Date(2021, 4, 7));
+ 
+        // let organized = organizeEvents(onDay, new Date(2021, 4, 7))
 
-        //Temporarily, just to see it.
-        setEventsList(organized);
+        // //Temporarily, just to see it.
+        // setEventsList(organized);
 
     
         
@@ -437,17 +301,14 @@ function Schedule(props) {
     }
 
 
-    //Check overlap function
-    //Give column based on overlap
-    //Maybe give a length property based off of number of rows?
-    // console.log("Settings:", settings)
+ 
 
     let dayLabels = [];
 
     
     
     let labelDate = new Date(settings.startDate.getTime());
-    // console.log(labelDate);
+
     for(let i = 0; i < settings.dayNum; i++) {
         // console.log("No changes" + labelDate);
         
@@ -478,9 +339,6 @@ function Schedule(props) {
             {dayLabels}
             {hourLabels}
             {hours}
-            {/* {testDataDates.events.map(listing => {
-                return <Event key = {listing.name + listing.startTime.getTime() + listing.endTime.getTime() + listing.startCol} details = {listing}/>;
-            })} */}
              {eventsList.map(listing => { 
                     return <Event key = {listing.id} details = {listing}/>;
                  })}
