@@ -20,6 +20,7 @@ function Schedule(props) {
 
   useEffect(() => {
     getEvents();
+    testMethod();
     
 
   }, []);
@@ -29,96 +30,136 @@ function Schedule(props) {
 //       console.log(eventsList);
 //   }, eventsList);
 
+ let testData8 = [{
+    "id": 100,
+    "event_name": "Open Panel",
+    "speaker": "",
+    "summary": "",
+    "location": "Conference Room E",
+    "start_time": "2021-05-08 22:00:00.000Z",
+    "end_time": "2021-05-08 23:30:00.000Z",
+    "start_col": 14,
+    "span": 8,
+    "color": "#B0E5B2"
+  },
+  {
+    "id": 99,
+    "event_name": "Talk E",
+    "speaker": "Dr. Nicholas Carson",
+    "summary": "Etiam ut consequat orci.",
+    "location": "Conference Room A",
+    "start_time": "2021-05-08 21:00:00.000Z",
+    "end_time": "2021-05-08 23:00:00.000Z",
+    "start_col": 22,
+    "span": 4,
+    "color": "#ffec6e"
+  },
+  {
+    "id": 97,
+    "event_name": "Talk C",
+    "speaker": "Dr. Nathaniel Riley",
+    "summary": "",
+    "location": "Conference Room D",
+    "start_time": "2021-05-08 20:00:00.000Z",
+    "end_time": "2021-05-08 22:00:00.000Z",
+    "start_col": 14,
+    "span": 4,
+    "color": "#ffec6e"
+  },
+  {
+    "id": 98,
+    "event_name": "Talk D",
+    "speaker": "Dr. Daniel Parsons ",
+    "summary": "",
+    "location": "Conference Room C",
+    "start_time": "2021-05-08 20:00:00.000Z",
+    "end_time": "2021-05-08 22:00:00.000Z",
+    "start_col": 18,
+    "span": 4,
+    "color": "#ffec6e"
+  }];
 
-//I don't think this will work so ignoring it for now
-  function defunctOrganizeEvents(rawEvents, targetDate) {
+  function testMethod() {
+      console.log("Test Method");
 
-    //! Need to create a "clean" version of array. One without col info
-    let cleanEvents = [];
-    rawEvents.forEach(event => {
-        let newEvent = {...event, start_col: 0, span: 0};
-        cleanEvents.push(newEvent);
-    })
+    let objects = [ {
+        "id": 49,
+        "event_name": "Opening Ceremony",
+        "speaker": "Eric Delgado",
+        "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        "location": "Lobby",
+        "start_time": "2021-05-07 22:30:00.000Z",
+        "end_time": "2021-05-08 00:00:00.000Z",
+        "start_col": 2,
+        "span": 12,
+        "color": "#A3F8A3"
+      },
+      {
+        "id": 50,
+        "event_name": "Meet and Greet",
+        "speaker": "Lila Tucker",
+        "summary": "Sed vulputate fermentum tellus viverra placerat. Donec vulputate tortor justo, ut congue urna pharetra vel.",
+        "location": "Conference Room A",
+        "start_time": "2021-05-08 00:00:00.000Z",
+        "end_time": "2021-05-08 02:00:00.000Z",
+        "start_col": 2,
+        "span": 6,
+        "color": "#A8EBF3"
+      },
+      {
+        "id": 51,
+        "event_name": "VIP Salon",
+        "speaker": "Lynn Lambert",
+        "summary": "Sed sit amet tempus libero.",
+        "location": "",
+        "start_time": "2021-05-08 00:00:00.000Z",
+        "end_time": "2021-05-08 02:00:00.000Z",
+        "start_col": 8,
+        "span": 6,
+        "color": "#F3B0A8"
+      }];
 
-    //Assume they have already been selected for correct day
-    let dayNum = dateDiff(settings.startDate, targetDate);
-    let colOffset = 2;
-    let baseColumn = dayNum * 12 + colOffset;
-    const targetCopy = new Date(targetDate);
-    //May not be necessary
-    targetCopy.setMinutes(0);
-    targetCopy.setHours(0);
-    let hoursArray = [];
-    //Create a date for each hour of the day
-    for (let i = 0; i < settings.hourNum; i++) {
-        let hour = new Date(targetCopy);
-        hour.setHours(settings.startHour + i);
-        hoursArray.push(hour);
-    }
-    // console.log(hoursArray);
-    
-    //Since on hour mark, I'll say it intersects at start of hour, but not at end
-    for(let i = 0; i < hoursArray.length; i++) {
-        let intersects = [];
+    let objects2 = convertToDate(objects);
+    // console.log(object2);
 
-        cleanEvents.forEach(event => {
-            //This works but creates a problem. Food trucks and talk both intersect merchants without intersecting each other
-        //Creating a false (3). So I think it makes sense to check at moments and not ranges?
-            // let hoursPlus = new Date(hoursArray[i]);
-            // hoursPlus.setHours(hoursPlus.getHours() +1);
-            // if(event.start_time < hoursPlus && event.end_time > hoursArray[i]) {
-            //     intersects.push(event);
-            // } 
+    //Error
+    let result = checkPhysicalInt(objects2[2], objects2[1]);
+    //   console.log(result);
 
-            if(event.start_time <= hoursArray[i] && event.end_time > hoursArray[i]) {
-                intersects.push(event);
-                //! Wait, I need to include the index and not the actual event
-                //Or something
-            }
-            
-        })
-        // console.log("For hour :", hoursArray[i].getHours());
-        // console.log("Intersects are", intersects);
-        let numInt = intersects.length;
-        for(let j = 0; j < numInt; j++) {
-            if(intersects.length == 1) {
-
-            }
-        }
-    }
-
+    // let timeResult = checkTimeInt(objects2[2], objects2[1]);
+    // console.log(timeResult);
   }
-
   //This checks for an intersection in grid placement.
-  //Question: Should this assume timeInt is true?
-  //That might be a neater solution, but for a brute force solution its probably better if it just checks if the events physically overlap at all (assuming they're on same day). 
-  //So that means it should probably call checkTimeInt().
-  //If timeIntersect is false, does that mean physical intersect is false?
-  //Yes, I think so
-  //Though, just tobe clear, the need to check for this comes from checking every event in the day each time a placement is considered, which will considerably slow the whole thing down.
-  //Editing so it only checks events that already have a timeInt would be better.
-  //!Note, haven't checked and am assuming works
+  
   function checkPhysicalInt(event1, event2) {
-
+    let error = false;
     //Error check
     if(event1.start_col === 0 || event2.start_col === 0 || event1.span === 0 || event2.span === 0) {
         console.log("Error! Undefined physical placement");
     }
+
+    if(event1.event_name === "Talk D" && event2.event_name === "Talk E") {
+        error = true;
+    };
+
+
 
 
     if(checkTimeInt(event1, event2) === false) {
         return false;
     } else {
         //Verified these give correct end values
-        let end_col1 = event1.start_col + event1.span;
-        let end_col2 = event2.start_col + event2.span;
+        let end_col1 = event1.start_col + event1.span - 0.1;
+        let end_col2 = event2.start_col + event2.span - 0.1;
 
         let maxStart = max(event1.start_col, event2.start_col);
         let minEnd = min(end_col1, end_col2);
 
         if(maxStart <= minEnd) {
+            // if(error) console.log("true");
             return true;
         } else {
+            // if(error) console.log("false");
             return false;
         }
     }
@@ -163,7 +204,7 @@ function Schedule(props) {
   }
 
 
-  
+  //Note! Currently only works if < 5 events. Need to add case for > 5 intersections. 
   function organizeEvents(rawEvents, targetDate) {
     let dayNum = dateDiff(settings.startDate, targetDate);
     let colOffset = 2;
@@ -234,26 +275,37 @@ function Schedule(props) {
 
               for(let x = 0; x < slots.length; x++) {
                   if(slots[x] === 0) {
-                      //Potential place
+                      
                       let blocked = false;
-                      //I probably want to exclude other intersecting events that have not been re-placed
-                      //One possible way to do that is to base the for loop off of the current index
-                      //Another way to do that might be to zero out locations of all that are being replaced, so they don't accidently intersect
+
+                      let origCol = intEvent.start_col;
+                      intEvent.start_col = baseColumn + x * defaultSpan;
+                  
                       for(let y = 0; y < addedIndex; y++) {
                         if(checkPhysicalInt(addedEvents[y], intEvent)) {
                            blocked = true;
                         }
                     }
+                    
                     if (!blocked) {
+                        
                         //Place event here
                         //Set columns
-                        intEvent.start_col = baseColumn + x * defaultSpan;
+                        
                         //Set slot to full
                         slots[x] = 1;
+
                         //break
                         break;
                         
+                    } else if (x === slots.length -1) {
+                        console.log("Error, found no open slot");
+                        console.log("Erorr on: ", intEvent);
+                        intEvent.start_col = origCol;
+                    } else {
+                        intEvent.start_col = origCol;
                     }
+                    
 
                   }
               }
@@ -263,9 +315,7 @@ function Schedule(props) {
          
         }
     }
-    //Just using to check function
-   checkPhysicalInt(addedEvents[0], addedEvents[1]);
-
+    console.log(addedEvents);
     return addedEvents;
   }
 
@@ -320,20 +370,28 @@ function Schedule(props) {
   const getEvents = () => {
     axios.get(url)
     .then((response => {
-        let editedData = convertToDate(response.data)
-    
-        //!Temporarily removed while messing with algo
+
+         //!Temporarily removed while messing with algo
     //   setEventsList(convertToDate(response.data));
+    
+        let editedData = convertToDate(response.data)
+
+        //Using testData to debug
+       let editedData2 = convertToDate(testData8);
+    
+       
         
       //Do experiments with single day stuff here
       
-        let onDay = getEventsOnDay(editedData, new Date(2021, 4, 8));
+        let onDay = getEventsOnDay(editedData, new Date(2021, 4, 7));
         // console.log(onDay);
-        let organized = organizeEvents(onDay, new Date(2021, 4, 8));
+        let organized = organizeEvents(onDay, new Date(2021, 4, 7));
         // console.log(organized);
 
         //Temporarily, just to see it.
         setEventsList(organized);
+
+    
         
     }))
     .catch(error => console.error(`Error: ${error}`))
