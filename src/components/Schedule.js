@@ -91,7 +91,45 @@ function Schedule(props) {
 
   function checkIntersect(event1, event2) {
       let maxStart = max(event1.start_time, event2.start_time);
-      let minEnd = min(event1.end_time, event2.end_time);
+    //   let minEnd = min(event1.end_time, event2.end_time);
+
+      //This has the same overlap problem with the talks
+      //I should look at exact numbers in that situation to find out why
+      //And look at the other days to get a feel
+
+     let end1Copy = new Date(event1.end_time);
+     let end2Copy = new Date(event2.end_time);
+      //Bumping back by one minute in calculations, to prevent intersections when things start and end in same hour
+      //Converted to new Date for readability when logging
+      let altEnd1 = new Date(end1Copy.setMinutes(end1Copy.getMinutes() -1));
+      let altEnd2 = new Date(end2Copy.setMinutes(end2Copy.getMinutes() -1));
+
+      let minEnd = min(altEnd1, altEnd2);
+
+    //   if(event2.speaker === "Dr. Nicholas Carson" && event1.speaker === "Dr. Nathaniel Riley") {
+    //       console.log("");
+    //       console.log("Event 1 is:", event1.event_name, "by ", event1.speaker);
+    //       console.log("Event 2 is:", event2.event_name, "by ", event2.speaker);
+    //       console.log("AltEnd1: ", altEnd1);
+    //       console.log("AltEnd2: ", altEnd2);
+        
+    //   }
+
+    //   if(event1.speaker === "Dr. Nicholas Carson" && event2.speaker === "Dr. Nathaniel Riley") {
+    //     console.log("");
+    //     console.log("Event 1 is:", event1.event_name, "by ", event1.speaker);
+    //     console.log("Event 2 is:", event2.event_name, "by ", event2.speaker);
+    //     console.log("AltEnd1: ", altEnd1);
+    //     console.log("AltEnd2: ", altEnd2);
+
+    //     if(maxStart <= minEnd) {
+    //         console.log(true);
+    //     } else {
+    //         console.log(false);
+    //     }
+
+      
+    // }
 
       if(maxStart <= minEnd) {
           return true;
@@ -117,10 +155,13 @@ function Schedule(props) {
   }
 
 
-  //Note! Currently thinks foodTrucks and talk intersect. 
+  //Note! Currently thinks foodTrucks and talk intersect. Possibly thinks open panel intersects with 3 talks as well
   //They probably technically do, on the last minute.
   //So I should get it to not count things that start and end at the exact same time as intersecting
-  
+  //Possibly check if intersect = 1 (two total), and there's space, place it before instead of after
+  //There's probably a more systematic way to do that though
+  //Could also fill the remainder of the space in cases of there only being two
+  //Since that is the situation where the visual would look most odd
   function organizeEvents(rawEvents, targetDate) {
     let dayNum = dateDiff(settings.startDate, targetDate);
     let colOffset = 2;
@@ -130,17 +171,31 @@ function Schedule(props) {
     rawEvents.forEach(event => {
         let newEvent = {...event, start_col: 0, span: 0};
         cleanEvents.push(newEvent);
+
+        // if(event.speaker === "Dr. Nicholas Carson") {
+        //     console.log("Main here");
+        //     console.log("id", event.id);
+        // }
     });
 
     let addedEvents = [];
 
     for(let i = 0; i < cleanEvents.length; i++) {
-        
+        let foundEvent = false;
+        if(cleanEvents[i].id === 99) {
+            console.log("found event");
+            foundEvent = true;
+        }
+
         let intIndex = [];
         for(let j = 0; j < addedEvents.length; j++) {
             if(checkIntersect(cleanEvents[i], addedEvents[j])) {
                 intIndex.push(j);
             }
+        }
+
+        if(foundEvent) {
+            console.log("Int index len", intIndex.length);
         }
         
         //Verified the if works
@@ -158,7 +213,7 @@ function Schedule(props) {
                 //Later will need to come back and add case for when events > 4
                 
 
-                //Just going to pretend that the latest col-position is always best first
+                //!!Just going to pretend that the latest col-position is always best first
 
                 //Possibly I'm editing a copy here
                 //Makes the span smaller, but not larger
@@ -168,16 +223,21 @@ function Schedule(props) {
 
                 //This will need editing, currently it assumes last is right
                 //Using j here just so they all end up in a different place
+                
                 intEvent.start_col = baseColumn + j * defaultSpan;
+
+            
 
             }
             //Now place the current event
+            
             cleanEvents[i].span = defaultSpan;
             cleanEvents[i].start_col = baseColumn + intIndex.length * defaultSpan;
             addedEvents.push(cleanEvents[i]);
+         
         }
     }
-    // console.log(addedEvents);
+   
     return addedEvents;
   }
 
@@ -237,9 +297,9 @@ function Schedule(props) {
         
       //Do experiments with single day stuff here
       
-        let onDay = getEventsOnDay(editedData, new Date(2021, 4, 8));
+        let onDay = getEventsOnDay(editedData, new Date(2021, 4, 9));
         // console.log(onDay);
-        let organized = organizeEvents(onDay, new Date(2021, 4, 8));
+        let organized = organizeEvents(onDay, new Date(2021, 4, 9));
         // console.log(organized);
 
         //Temporarily, just to see it.
