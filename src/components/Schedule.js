@@ -203,6 +203,9 @@ function Schedule(props) {
              //Once the current event is added, it is now one of the intersecting events
              addedEvents.push(cleanEvents[i]);
              intIndex.push(addedEvents.length-1)
+
+             //! New
+             let slots = new Array(intIndex.length).fill(0);
            
             for(let j = 0; j < intIndex.length ; j++) {
 
@@ -211,8 +214,6 @@ function Schedule(props) {
                 //Current intersecting event that is being placed
                 let intEvent = addedEvents[addedIndex];
 
-                //This is where it starts to get iffy
-               //Add new stuff here I think
 
                 //Makes the span smaller, but not larger
                 if(!(intEvent.span > 0 && intEvent.span < defaultSpan)) {
@@ -221,19 +222,41 @@ function Schedule(props) {
 
                 //This will need editing, currently it assumes last is right
                 //Using j here just so they all end up in a different place
-                intEvent.start_col = baseColumn + j * defaultSpan;
+                // intEvent.start_col = baseColumn + j * defaultSpan;
 
                 //Alt version
+                
+                //Check each slot
+                
+               //Place based on empty slots
+               //Put in first empty slot in the array
+               //Note, potential problme where it reaches end of "slots" without finding a valid place. Error message that?
 
-                //Array with number of slots 
-                //let spots = new Array(intIndex.length + 1);
+              for(let x = 0; x < slots.length; x++) {
+                  if(slots[x] === 0) {
+                      //Potential place
+                      let blocked = false;
+                      //I probably want to exclude other intersecting events that have not been re-placed
+                      //One possible way to do that is to base the for loop off of the current index
+                      //Another way to do that might be to zero out locations of all that are being replaced, so they don't accidently intersect
+                      for(let y = 0; y < addedIndex; y++) {
+                        if(checkPhysicalInt(addedEvents[y], intEvent)) {
+                           blocked = true;
+                        }
+                    }
+                    if (!blocked) {
+                        //Place event here
+                        //Set columns
+                        intEvent.start_col = baseColumn + x * defaultSpan;
+                        //Set slot to full
+                        slots[x] = 1;
+                        //break
+                        break;
+                        
+                    }
 
-                //!Note, may need to add "current event" to thing being cycled through here
-
-                //Maybe I should actually do that first to make sure it doesn't break anything?
-
-                //I could continue to do it last but, then I'd need to duplicate some code to cycle through empty? Arrayslots
-
+                  }
+              }
             
 
             }
@@ -304,9 +327,9 @@ function Schedule(props) {
         
       //Do experiments with single day stuff here
       
-        let onDay = getEventsOnDay(editedData, new Date(2021, 4, 9));
+        let onDay = getEventsOnDay(editedData, new Date(2021, 4, 8));
         // console.log(onDay);
-        let organized = organizeEvents(onDay, new Date(2021, 4, 9));
+        let organized = organizeEvents(onDay, new Date(2021, 4, 8));
         // console.log(organized);
 
         //Temporarily, just to see it.
