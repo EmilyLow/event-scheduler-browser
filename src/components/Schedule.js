@@ -89,13 +89,21 @@ function Schedule(props) {
 
   }
 
-  function checkIntersect(event1, event2) {
-      let maxStart = max(event1.start_time, event2.start_time);
-    //   let minEnd = min(event1.end_time, event2.end_time);
+  //This checks for an intersection in grid placement.
+  //Question: Should this assume intersection in time is true?
+  //That might be a neater solution, but for a brute force solution its probably better if it just checks if the events physically overlap at all (assuming they're on same day). 
+  //So that means it should probably call checkTimeInt().
+  //If timeIntersect is false, does that mean physical intersect is false?
+  //Yes, I think so
+  //Though, just tobe clear, the need to check for this comes from checking every event in the day each time a placement is considered, which will considerably slow the whole thing down.
+  //Editing so it only checks events that already have a timeInt would be better.
+  function checkPhysicalInt(event1, event2) {
 
-      //This has the same overlap problem with the talks
-      //I should look at exact numbers in that situation to find out why
-      //And look at the other days to get a feel
+  }
+
+  //This checks for an intersection in time, aka vertical overlap
+  function checkTimeInt(event1, event2) {
+      let maxStart = max(event1.start_time, event2.start_time);
 
      let end1Copy = new Date(event1.end_time);
      let end2Copy = new Date(event2.end_time);
@@ -106,30 +114,7 @@ function Schedule(props) {
 
       let minEnd = min(altEnd1, altEnd2);
 
-    //   if(event2.speaker === "Dr. Nicholas Carson" && event1.speaker === "Dr. Nathaniel Riley") {
-    //       console.log("");
-    //       console.log("Event 1 is:", event1.event_name, "by ", event1.speaker);
-    //       console.log("Event 2 is:", event2.event_name, "by ", event2.speaker);
-    //       console.log("AltEnd1: ", altEnd1);
-    //       console.log("AltEnd2: ", altEnd2);
-        
-    //   }
-
-    //   if(event1.speaker === "Dr. Nicholas Carson" && event2.speaker === "Dr. Nathaniel Riley") {
-    //     console.log("");
-    //     console.log("Event 1 is:", event1.event_name, "by ", event1.speaker);
-    //     console.log("Event 2 is:", event2.event_name, "by ", event2.speaker);
-    //     console.log("AltEnd1: ", altEnd1);
-    //     console.log("AltEnd2: ", altEnd2);
-
-    //     if(maxStart <= minEnd) {
-    //         console.log(true);
-    //     } else {
-    //         console.log(false);
-    //     }
-
       
-    // }
 
       if(maxStart <= minEnd) {
           return true;
@@ -155,13 +140,7 @@ function Schedule(props) {
   }
 
 
-  //Note! Currently thinks foodTrucks and talk intersect. Possibly thinks open panel intersects with 3 talks as well
-  //They probably technically do, on the last minute.
-  //So I should get it to not count things that start and end at the exact same time as intersecting
-  //Possibly check if intersect = 1 (two total), and there's space, place it before instead of after
-  //There's probably a more systematic way to do that though
-  //Could also fill the remainder of the space in cases of there only being two
-  //Since that is the situation where the visual would look most odd
+  
   function organizeEvents(rawEvents, targetDate) {
     let dayNum = dateDiff(settings.startDate, targetDate);
     let colOffset = 2;
@@ -172,33 +151,24 @@ function Schedule(props) {
         let newEvent = {...event, start_col: 0, span: 0};
         cleanEvents.push(newEvent);
 
-        // if(event.speaker === "Dr. Nicholas Carson") {
-        //     console.log("Main here");
-        //     console.log("id", event.id);
-        // }
     });
 
     let addedEvents = [];
 
     for(let i = 0; i < cleanEvents.length; i++) {
-        let foundEvent = false;
-        if(cleanEvents[i].id === 99) {
-            console.log("found event");
-            foundEvent = true;
-        }
+       
 
         let intIndex = [];
         for(let j = 0; j < addedEvents.length; j++) {
-            if(checkIntersect(cleanEvents[i], addedEvents[j])) {
+            if(checkTimeInt(cleanEvents[i], addedEvents[j])) {
                 intIndex.push(j);
             }
         }
+        console.log(cleanEvents[0]);
 
-        if(foundEvent) {
-            console.log("Int index len", intIndex.length);
-        }
+       
         
-        //Verified the if works
+      
         if(intIndex.length === 0) {
             cleanEvents[i].span = 12;
             cleanEvents[i].start_col = baseColumn;
@@ -210,12 +180,8 @@ function Schedule(props) {
                 let intEvent = addedEvents[addedIndex];
 
                 //This is where it starts to get iffy
-                //Later will need to come back and add case for when events > 4
-                
+               //Add new stuff here I think
 
-                //!!Just going to pretend that the latest col-position is always best first
-
-                //Possibly I'm editing a copy here
                 //Makes the span smaller, but not larger
                 if(!(intEvent.span > 0 && intEvent.span < defaultSpan)) {
                     intEvent.span = defaultSpan;
@@ -223,7 +189,6 @@ function Schedule(props) {
 
                 //This will need editing, currently it assumes last is right
                 //Using j here just so they all end up in a different place
-                
                 intEvent.start_col = baseColumn + j * defaultSpan;
 
             
@@ -240,6 +205,7 @@ function Schedule(props) {
    
     return addedEvents;
   }
+
 
   function dateDiff(first, second) {
     let firstCopy = new Date(first);
@@ -262,7 +228,7 @@ function Schedule(props) {
       let eventsOnDay = [];
 
       rawEvents.forEach(event => {
-        //   console.log(event.start_time.getMonth());
+       
 
           if(event.start_time.getMonth() === month && event.start_time.getDate() === date) {
           
