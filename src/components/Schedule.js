@@ -90,15 +90,38 @@ function Schedule(props) {
   }
 
   //This checks for an intersection in grid placement.
-  //Question: Should this assume intersection in time is true?
+  //Question: Should this assume timeInt is true?
   //That might be a neater solution, but for a brute force solution its probably better if it just checks if the events physically overlap at all (assuming they're on same day). 
   //So that means it should probably call checkTimeInt().
   //If timeIntersect is false, does that mean physical intersect is false?
   //Yes, I think so
   //Though, just tobe clear, the need to check for this comes from checking every event in the day each time a placement is considered, which will considerably slow the whole thing down.
   //Editing so it only checks events that already have a timeInt would be better.
+  //!Note, haven't checked and am assuming works
   function checkPhysicalInt(event1, event2) {
 
+    //Error check
+    if(event1.start_col === 0 || event2.start_col === 0 || event1.span === 0 || event2.span === 0) {
+        console.log("Error! Undefined physical placement");
+    }
+
+
+    if(checkTimeInt(event1, event2) === false) {
+        return false;
+    } else {
+        //Verified these give correct end values
+        let end_col1 = event1.start_col + event1.span;
+        let end_col2 = event2.start_col + event2.span;
+
+        let maxStart = max(event1.start_col, event2.start_col);
+        let minEnd = min(end_col1, end_col2);
+
+        if(maxStart <= minEnd) {
+            return true;
+        } else {
+            return false;
+        }
+    }
   }
 
   //This checks for an intersection in time, aka vertical overlap
@@ -123,19 +146,19 @@ function Schedule(props) {
       }
   }
 
-  function max(date1, date2) {
-    if(date1 > date2) {
-        return date1;
+  function max(value1, value2) {
+    if(value1 > value2) {
+        return value1;
     } else {
-        return date2;
+        return value2;
     }
   }
 
-  function min(date1, date2) {
-    if(date1 < date2) {
-        return date1;
+  function min(value1, value2) {
+    if(value1 < value2) {
+        return value1;
     } else {
-        return date2;
+        return value2;
     }
   }
 
@@ -154,6 +177,7 @@ function Schedule(props) {
     });
 
     let addedEvents = [];
+    //    console.log(cleanEvents[0]);
 
     for(let i = 0; i < cleanEvents.length; i++) {
        
@@ -164,19 +188,27 @@ function Schedule(props) {
                 intIndex.push(j);
             }
         }
-        console.log(cleanEvents[0]);
-
+     
+        // console.log(intIndex);
        
         
-      
+        //Length of intIndex is the number of intersections
         if(intIndex.length === 0) {
             cleanEvents[i].span = 12;
             cleanEvents[i].start_col = baseColumn;
             addedEvents.push(cleanEvents[i]);
         } else {
             let defaultSpan = 12/(intIndex.length +1);
+             //Add new event to addedEvents, and add it's index to the list of intersections
+             //Once the current event is added, it is now one of the intersecting events
+             addedEvents.push(cleanEvents[i]);
+             intIndex.push(addedEvents.length-1)
+           
             for(let j = 0; j < intIndex.length ; j++) {
+
+               
                 let addedIndex = intIndex[j];
+                //Current intersecting event that is being placed
                 let intEvent = addedEvents[addedIndex];
 
                 //This is where it starts to get iffy
@@ -191,18 +223,26 @@ function Schedule(props) {
                 //Using j here just so they all end up in a different place
                 intEvent.start_col = baseColumn + j * defaultSpan;
 
+                //Alt version
+
+                //Array with number of slots 
+                //let spots = new Array(intIndex.length + 1);
+
+                //!Note, may need to add "current event" to thing being cycled through here
+
+                //Maybe I should actually do that first to make sure it doesn't break anything?
+
+                //I could continue to do it last but, then I'd need to duplicate some code to cycle through empty? Arrayslots
+
             
 
             }
-            //Now place the current event
-            
-            cleanEvents[i].span = defaultSpan;
-            cleanEvents[i].start_col = baseColumn + intIndex.length * defaultSpan;
-            addedEvents.push(cleanEvents[i]);
          
         }
     }
-   
+    //Just using to check function
+   checkPhysicalInt(addedEvents[0], addedEvents[1]);
+
     return addedEvents;
   }
 
@@ -259,7 +299,8 @@ function Schedule(props) {
     .then((response => {
         let editedData = convertToDate(response.data)
     
-      setEventsList(convertToDate(response.data));
+        //!Temporarily removed while messing with algo
+    //   setEventsList(convertToDate(response.data));
         
       //Do experiments with single day stuff here
       
