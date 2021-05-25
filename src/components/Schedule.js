@@ -9,6 +9,7 @@ function Schedule(props) {
 
     let {settings, eventsList} = props;
   
+    console.log(eventsList[0]);
 
     const days = [
         'Sun',
@@ -47,6 +48,7 @@ function Schedule(props) {
         }
     }
 
+   
 
  
 

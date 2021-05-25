@@ -34,10 +34,11 @@ function App() {
 //   }, eventsList);
 
 const getEvents = () => {
+  
   axios.get(url)
   .then((response => {
 
-
+    console.log("Get events then");
     setEventsList(convertToDate(response.data));
 
       // //Code for testing a single day's data
@@ -57,6 +58,95 @@ const getEvents = () => {
   .catch(error => console.error(`Error: ${error}`))
 }
 
+ const updateEvent = (event) => {
+   let id = event.id;
+
+   axios.put(url + "/" + id, event)
+   .then((response) => {
+     console.log(response);
+   })
+   .catch(error => console.error(`Error: ${error}`))
+ }
+
+//TODO: Randomize color
+const addEvent = (event) => {
+  // console.log(event);
+
+
+  let formStart =  localStringToUTCString(event.start_time).replace('T', ' ');
+  let formEnd = localStringToUTCString(event.end_time).replace('T', ' ');
+
+  
+
+  let formEvent = {
+    event_name: event.title,
+    //! Check, do these bug out if empty?
+    speaker: event.speaker,
+    summary: event.description,
+    location: event.location,
+    start_time: formStart,
+    end_time: formEnd,
+    // Try to do without these first just to see  
+    //Before that, giving values for sake of testing     
+    start_col: 2,
+    span: 2,
+    color: "#ffec6e" //yellow, !Randomize later
+  };
+
+  axios.post(url, formEvent)
+  .then((response => {
+    // console.log("Post response,", response.data);
+    // console.log("Post request");
+    // console.log(response.data);
+    triggerReorder(response.data);
+  }))
+  .catch(error => console.error(`Error: ${error}`))
+}
+
+  //! Problem is that dates remain in wrong format. I may also be neglecting time zone here. 
+  //Note: This seems to cause events to display immediately, before reorder. Would it not do that if I left it inside the axios? Or is it only doing that because I'm editing code?
+  function triggerReorder(newEvent) {
+    // console.log(newEvent);
+
+    let formNewEvent = convertToDate([newEvent])[0];
+    let appEvents = [...eventsList, formNewEvent];
+ 
+    // console.log(appEvents);
+    
+    
+    
+    
+    let onDay = getEventsOnDay(appEvents, formNewEvent.start_time);
+    // console.log("On day", onDay);
+   
+    let organized = organizeEvents(onDay)
+
+    //Test line!
+    //Used this to confirm that events are added and organized
+    // setEventsList(organized);
+
+    //For each organized, updateEvent
+    // Overall, getEvents
+
+    //Note! I think I'm going to have trouble with these not going in order, so the get happening before all the updates
+    //Try await?
+    organized.forEach((event) => {
+      updateEvent(event);
+    })
+
+    getEvents();
+  }
+
+  function localStringToUTCString(localString) {
+    console.log("Exist 2");
+    let dateObject = new Date(localString);
+    let utcString = dateObject.toISOString();
+    console.log("Exist 3");
+    return utcString;
+}
+
+
+
 const convertToDate = (rawEvents) => {
   let postEvents = [];
 
@@ -64,6 +154,7 @@ const convertToDate = (rawEvents) => {
     //   console.log(event);
       let newEvent = {...event};
         
+        // console.log(event.start_time);
         newEvent.start_time = new Date(event.start_time);
         newEvent.end_time = new Date(event.end_time);
         // console.log(newEvent);
@@ -73,8 +164,10 @@ const convertToDate = (rawEvents) => {
 }
 
   //Note! Currently only works if < 5 events. Need to add case for > 5 intersections. 
-  function organizeEvents(rawEvents, targetDate) {
-    let dayNum = dateDiff(settings.startDate, targetDate);
+  function organizeEvents(rawEvents) {
+
+   
+    let dayNum = dateDiff(settings.startDate, rawEvents[0].start_time);
     let colOffset = 2;
     let baseColumn = dayNum * 12 + colOffset;
 
@@ -269,7 +362,7 @@ const convertToDate = (rawEvents) => {
       </ScheduleDiv>
       <FormDiv>
         <SettingsForm setSettings={setSettings} />
-        <InputForm/>
+        <InputForm addEvent = {addEvent}/>
       </FormDiv>
       
     </LayoutDiv>

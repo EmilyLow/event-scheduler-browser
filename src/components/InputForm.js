@@ -20,10 +20,15 @@ const useStyles = makeStyles(theme => ({
   }));
 
 
-function InputForm() {
+function InputForm(props) {
     const classes = useStyles();
      const {handleSubmit, control } = useForm();
-    const onSubmit = data => console.log(data);
+    
+    const {addEvent} = props;
+
+    const onSubmit = data => {
+      addEvent(data);
+    }
 
     return(
        
@@ -49,9 +54,9 @@ function InputForm() {
             />
 
         <Controller
-            name="start-time"
+            name="start_time"
             control={control}
-            defaultValue="2021-04-07T10:30"
+            defaultValue="2021-05-07T10:30"
             render={({ field: { onChange, value }, fieldState: { error } }) => (
           <TextField
             label="Start Time"
@@ -67,9 +72,9 @@ function InputForm() {
             />
 
     <Controller
-            name="end-time"
+            name="end_time"
             control={control}
-            defaultValue="2021-04-07T12:00"
+            defaultValue="2021-05-07T12:00"
             render={({ field: { onChange, value }, fieldState: { error } }) => (
           <TextField
             label="End Time"
