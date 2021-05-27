@@ -58,18 +58,19 @@ const getEvents = () => {
   .catch(error => console.error(`Error: ${error}`))
 }
 
+//Return to try and make into a promise
  const updateEvent = (event) => {
    let id = event.id;
 
-   axios.put(url + "/" + id, event)
+  return axios.put(url + "/" + id, event)
    .then((response) => {
-     console.log(response);
+     console.log("Put", response);
    })
    .catch(error => console.error(`Error: ${error}`))
  }
 
 //TODO: Randomize color
-const addEvent = (event) => {
+ const  addEvent = (event) => {
   // console.log(event);
 
 
@@ -95,31 +96,40 @@ const addEvent = (event) => {
 
   axios.post(url, formEvent)
   .then((response => {
-    // console.log("Post response,", response.data);
-    // console.log("Post request");
-    // console.log(response.data);
     triggerReorder(response.data);
+    //Need to control the order of this somehow
+    getEvents();
   }))
   .catch(error => console.error(`Error: ${error}`))
 }
 
-  //! Problem is that dates remain in wrong format. I may also be neglecting time zone here. 
-  //Note: This seems to cause events to display immediately, before reorder. Would it not do that if I left it inside the axios? Or is it only doing that because I'm editing code?
-  function triggerReorder(newEvent) {
-    // console.log(newEvent);
+
+  //Problem! How to refrain from updating entire thing until after update?
+   function  triggerReorder(newEvent) {
+   
 
     let formNewEvent = convertToDate([newEvent])[0];
     let appEvents = [...eventsList, formNewEvent];
  
-    // console.log(appEvents);
-    
-    
-    
-    
     let onDay = getEventsOnDay(appEvents, formNewEvent.start_time);
-    // console.log("On day", onDay);
-   
-    let organized = organizeEvents(onDay)
+    let organized = organizeEvents(onDay);
+
+    let promiseArray = [...organized];
+    console.log(promiseArray);
+
+    //Possibly make updateEvent async? 
+    let  promises = promiseArray.map(async event => {
+      console.log("Loop over events");
+      let thing = await updateEvent(event);
+      console.log("Promise? ", thing);
+      return thing;
+    })
+
+    Promise.all(promises)
+    .then(() => {
+      getEvents();
+      console.log("Then");
+    })
 
     //Test line!
     //Used this to confirm that events are added and organized
@@ -130,18 +140,48 @@ const addEvent = (event) => {
 
     //Note! I think I'm going to have trouble with these not going in order, so the get happening before all the updates
     //Try await?
-    organized.forEach((event) => {
-      updateEvent(event);
-    })
+    // organized.forEach( (event) => {
+    //    updateEvent(event);
+    // })
 
-    getEvents();
+    // for (let i = 0; i < organized.length; i++) {
+    //    updateEvent(organized[i]);
+    // }
+
+    //Call back attempt
+    // updateAll(organized, getEvents);
+
+    //Try Catch also fails, probably because its counting "updateAll" as being done even when its not. 
+    // try {
+    //   updateAll(organized);
+    // } catch(error) {
+    //   console.log(error);
+    // } finally {
+    //   getEvents();
+    // }
+
+
   }
+  //Callback
+  //Pass getEvents() to another function as a callback? Call a (updateAll(callback)) with getEvents as the callback?
+  //! This doesn't work, possibly because the code goes ahead and skips the loop and calls the callback. 
+  //! This callback style might assume inside the function inherently waits before doing the callback???
+  //Or maybe the callback knows to wait because it itself has a parameter or something? That doesn't seem quite right
+  //I think maybe the issue is that callbacks need input to work?
+
+  // function updateAll(events) {
+  //   for (let i = 0; i < events.length; i++) {
+  //     updateEvent(events[i]);
+  //  }
+  //  //Does it need to return something or something?
+  // //  callback();
+  // }
 
   function localStringToUTCString(localString) {
-    console.log("Exist 2");
+
     let dateObject = new Date(localString);
     let utcString = dateObject.toISOString();
-    console.log("Exist 3");
+
     return utcString;
 }
 
@@ -151,13 +191,13 @@ const convertToDate = (rawEvents) => {
   let postEvents = [];
 
   rawEvents.forEach(event => {
-    //   console.log(event);
+
       let newEvent = {...event};
         
-        // console.log(event.start_time);
+
         newEvent.start_time = new Date(event.start_time);
         newEvent.end_time = new Date(event.end_time);
-        // console.log(newEvent);
+  
         postEvents.push(newEvent);
   })
   return postEvents;

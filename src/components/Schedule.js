@@ -9,7 +9,7 @@ function Schedule(props) {
 
     let {settings, eventsList} = props;
   
-    console.log(eventsList[0]);
+    // console.log(eventsList[0]);
 
     const days = [
         'Sun',
