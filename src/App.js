@@ -41,24 +41,12 @@ const getEvents = () => {
     console.log("Get events then");
     setEventsList(convertToDate(response.data));
 
-      // //Code for testing a single day's data
-      // let editedData = convertToDate(response.data)
-    
-    
-      // let onDay = getEventsOnDay(editedData, new Date(2021, 4, 8));
-
-      // let organized = organizeEvents(onDay, new Date(2021, 4, 8))
-
-      // //Temporarily, just to see it.
-      // setEventsList(organized);
-
-  
       
   }))
   .catch(error => console.error(`Error: ${error}`))
 }
 
-//Return to try and make into a promise
+ //This creates a promise to update the event, and does not actually update it directly. 
  const updateEvent = (event) => {
    let id = event.id;
 
@@ -71,7 +59,7 @@ const getEvents = () => {
 
 //TODO: Randomize color
  const  addEvent = (event) => {
-  // console.log(event);
+ 
 
 
   let formStart =  localStringToUTCString(event.start_time).replace('T', ' ');
@@ -81,30 +69,25 @@ const getEvents = () => {
 
   let formEvent = {
     event_name: event.title,
-    //! Check, do these bug out if empty?
+
     speaker: event.speaker,
     summary: event.description,
     location: event.location,
     start_time: formStart,
     end_time: formEnd,
-    // Try to do without these first just to see  
-    //Before that, giving values for sake of testing     
-    start_col: 2,
-    span: 2,
     color: "#ffec6e" //yellow, !Randomize later
   };
 
   axios.post(url, formEvent)
   .then((response => {
     triggerReorder(response.data);
-    //Need to control the order of this somehow
     getEvents();
   }))
   .catch(error => console.error(`Error: ${error}`))
 }
 
 
-  //Problem! How to refrain from updating entire thing until after update?
+
    function  triggerReorder(newEvent) {
    
 
@@ -115,13 +98,12 @@ const getEvents = () => {
     let organized = organizeEvents(onDay);
 
     let promiseArray = [...organized];
-    console.log(promiseArray);
+  
 
-    //Possibly make updateEvent async? 
-    let  promises = promiseArray.map(async event => {
+    let  promises = organized.map(async event => {
       console.log("Loop over events");
       let thing = await updateEvent(event);
-      console.log("Promise? ", thing);
+
       return thing;
     })
 
@@ -131,51 +113,7 @@ const getEvents = () => {
       console.log("Then");
     })
 
-    //Test line!
-    //Used this to confirm that events are added and organized
-    // setEventsList(organized);
-
-    //For each organized, updateEvent
-    // Overall, getEvents
-
-    //Note! I think I'm going to have trouble with these not going in order, so the get happening before all the updates
-    //Try await?
-    // organized.forEach( (event) => {
-    //    updateEvent(event);
-    // })
-
-    // for (let i = 0; i < organized.length; i++) {
-    //    updateEvent(organized[i]);
-    // }
-
-    //Call back attempt
-    // updateAll(organized, getEvents);
-
-    //Try Catch also fails, probably because its counting "updateAll" as being done even when its not. 
-    // try {
-    //   updateAll(organized);
-    // } catch(error) {
-    //   console.log(error);
-    // } finally {
-    //   getEvents();
-    // }
-
-
   }
-  //Callback
-  //Pass getEvents() to another function as a callback? Call a (updateAll(callback)) with getEvents as the callback?
-  //! This doesn't work, possibly because the code goes ahead and skips the loop and calls the callback. 
-  //! This callback style might assume inside the function inherently waits before doing the callback???
-  //Or maybe the callback knows to wait because it itself has a parameter or something? That doesn't seem quite right
-  //I think maybe the issue is that callbacks need input to work?
-
-  // function updateAll(events) {
-  //   for (let i = 0; i < events.length; i++) {
-  //     updateEvent(events[i]);
-  //  }
-  //  //Does it need to return something or something?
-  // //  callback();
-  // }
 
   function localStringToUTCString(localString) {
 
@@ -203,7 +141,7 @@ const convertToDate = (rawEvents) => {
   return postEvents;
 }
 
-  //Note! Currently only works if < 5 events. Need to add case for > 5 intersections. 
+  //TODO: Currently only works if < 5 events. Need to add case for > 5 intersections. 
   function organizeEvents(rawEvents) {
 
    
