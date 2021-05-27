@@ -38,7 +38,6 @@ const getEvents = () => {
   axios.get(url)
   .then((response => {
 
-    console.log("Get events then");
     setEventsList(convertToDate(response.data));
 
       
@@ -52,7 +51,7 @@ const getEvents = () => {
 
   return axios.put(url + "/" + id, event)
    .then((response) => {
-     console.log("Put", response);
+
    })
    .catch(error => console.error(`Error: ${error}`))
  }
@@ -101,16 +100,13 @@ const getEvents = () => {
   
 
     let  promises = organized.map(async event => {
-      console.log("Loop over events");
-      let thing = await updateEvent(event);
 
-      return thing;
+      return await updateEvent(event);;
     })
 
     Promise.all(promises)
     .then(() => {
       getEvents();
-      console.log("Then");
     })
 
   }
