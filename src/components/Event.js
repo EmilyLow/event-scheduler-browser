@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Popover from '@material-ui/core/Popover';
 import React from "react";
 import Card from '@material-ui/core/Card';
+
 import ContentPane from "./ContentPane";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -13,14 +14,8 @@ const useStyles = makeStyles((theme) => ({
   }));
   
 
-function Event({details, settings}) {
+function Event({details, settings, deleteEvent}) {
 
-  
-  // let details.start_time = new Date(details.start_time);
-  // let details.end_time = new Date(details.end_time);
-
-  // console.log("Details: ", details);
-  // console.log("details.start_time " + details.start_time);
 
 
     let startTimeValue = details.start_time.getHours() +(details.start_time.getMinutes() /60);
@@ -63,7 +58,7 @@ function Event({details, settings}) {
             style: { width: '300px' },
           }}
         >
-            <ContentPane details = {details} startTimeValue = {details.start_time} endTimeValue = {details.end_time}/>
+            <ContentPane details = {details} startTimeValue = {details.start_time} endTimeValue = {details.end_time} deleteEvent={deleteEvent}/>
                
          
         </Popover>

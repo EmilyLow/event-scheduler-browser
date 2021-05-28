@@ -52,7 +52,7 @@ function App() {
  }
 
  const updateSettings = (newSettings) => {
-   console.log("Update settings called");
+ 
   let id = newSettings.id;
 
   let renamed = {
@@ -66,7 +66,7 @@ function App() {
 
   axios.put(url + "/settings/" + id, renamed)
   .then((response) => {
-    // console.log(response);
+
     //Maybe not best practice
     setSettings(newSettings);
 
@@ -81,17 +81,30 @@ const getEvents = () => {
   .then((response => {
 
     setEventsList(convertToDate(response.data));
-
       
   }))
   .catch(error => console.error(`Error: ${error}`))
 }
 
+ const getWithoutUpdate = async () => {
+  //  console.log("Get Without Update Called");
+   let results;
+
+   await axios.get(url + "/events")
+   .then((response) => {
+    // console.log("Get Without Update Then");
+    results = response.data;
+   })
+   .catch(error => console.error(`Error: ${error}`))
+
+   return results;
+ }
+
  //This creates a promise to update the event, and does not actually update it directly. 
  const updateEvent = (event) => {
    let id = event.id;
    
-    console.log("UpdateEvent", event);
+
   return axios.put(url + "/events/" + id, event)
    .then((response) => {
     // console.log("Update");
@@ -100,15 +113,20 @@ const getEvents = () => {
    .catch(error => console.error(`Error: ${error}`))
  }
 
-//TODO: Randomize color
+ const deleteEvent = (event) => {
+  //  console.log("Delete", event);
+   let id = event.id;
+
+   axios.delete(url + "/events/" + id)
+   .then((response) => {
+    triggerDeleteReorder(event);
+   })
+   .catch(error => console.error(`Error: ${error}`))
+ }
+
+
  const  addEvent = (event) => {
  
-
-  //! This might not be necessary?
-  let formStart =  localStringToUTCString(event.start_time).replace('T', ' ');
-  let formEnd = localStringToUTCString(event.end_time).replace('T', ' ');
-
-  
 
   let formEvent = {
     event_name: event.title,
@@ -116,8 +134,8 @@ const getEvents = () => {
     speaker: event.speaker,
     summary: event.description,
     location: event.location,
-    start_time: formStart,
-    end_time: formEnd,
+    start_time: event.start_time,
+    end_time: event.end_time,
     color: getRandomColor()
   };
 
@@ -130,7 +148,7 @@ const getEvents = () => {
 }
 
 
-
+  
    function  triggerReorder(newEvent) {
    
 
@@ -144,7 +162,7 @@ const getEvents = () => {
   
 
     let  promises = organized.map(async event => {
-      // console.log("Looping promises");
+ 
       return await updateEvent(event);;
     })
 
@@ -153,6 +171,25 @@ const getEvents = () => {
       getEvents();
     })
 
+  }
+
+  async function triggerDeleteReorder(deletedEvent) {
+    
+    let remainingEvents =  await getWithoutUpdate();
+    let formRemainingEvents = convertToDate(remainingEvents);
+    
+    let remainingOnDay = getEventsOnDay(formRemainingEvents, deletedEvent.start_time);
+
+    let organized = organizeEvents(remainingOnDay);
+
+    let promises = organized.map(async event => {
+      return await updateEvent(event);
+    })
+
+    Promise.all(promises)
+    .then(() => {
+      getEvents();
+    })
   }
 
   function localStringToUTCString(localString) {
@@ -383,7 +420,7 @@ const convertToDate = (rawEvents) => {
     <LayoutDiv>
       <ScheduleDiv>
         <StyledH1>Convention Schedule</StyledH1>
-        <Schedule settings = {settings} eventsList = {eventsList}/>
+        <Schedule settings = {settings} eventsList = {eventsList} deleteEvent={deleteEvent}/>
       </ScheduleDiv>
       <FormDiv>
         <SettingsForm settings = {settings} updateSettings = {updateSettings} />

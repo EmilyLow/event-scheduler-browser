@@ -7,7 +7,7 @@ import Event from "./Event";
 
 function Schedule(props) {
 
-    let {settings, eventsList} = props;
+    let {settings, eventsList, deleteEvent} = props;
 //    console.log(eventsList[0]);
 
 
@@ -59,20 +59,17 @@ function Schedule(props) {
     let labelDate = new Date(settings.startDate.getTime());
 
     for(let i = 0; i < settings.dayNum; i++) {
-        // console.log("No changes" + labelDate);
+
         
 
         if (i > 0) {
             const currentDate = labelDate.getDate();
             labelDate.setDate(currentDate + 1);
         }
-        // console.log("i=" + i);
-        // console.log(labelDate);
+
         
         let  dayNum = labelDate.getDate();
         let  dayString = days[labelDate.getDay()];
-        // console.log("Day Num: " + dayNum);
-        // console.log("DayString: " + dayString);
 
        dayLabels[i] = <DayLabel key = {"dl" + i} day = {i}>
 
@@ -89,7 +86,7 @@ function Schedule(props) {
             {hourLabels}
             {hours}
              {eventsList.map(listing => { 
-                    return <Event key = {listing.id} details = {listing} settings={settings}/>;
+                    return <Event key = {listing.id} details = {listing} settings={settings} deleteEvent = {deleteEvent}/>;
                  })}
                  
                 
