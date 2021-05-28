@@ -20,11 +20,12 @@ function App() {
 
   const [eventsList, setEventsList] = useState([]);
 
-  const url = 'http://localhost:3001/events';
+  // const url = 'http://localhost:3001/events';
+  const url = 'http://localhost:3001';
 
   useEffect(() => {
     getEvents();
-
+    getSettings();
 
   }, []);
 
@@ -33,9 +34,32 @@ function App() {
 //       console.log(eventsList);
 //   }, eventsList);
 
+ const getSettings = () => {
+   axios.get(url + "/settings")
+   .then((response => {
+    
+     //Note, not sure what to do about settings id, if it's best to always use 1
+     let newSettings = {
+      id: response.data[0].id,
+      dayNum: response.data[0].day_number,
+      hourNum: response.data[0].hour_number,
+      startHour: response.data[0].start_hour,
+      startDate: new Date(response.data[0].start_date)
+     }
+    
+     setSettings(newSettings);
+   
+   }))
+   .catch(error => console.error(`Error: ${error}`))
+ }
+
+ const updateSettings = () => {
+
+ };
+
 const getEvents = () => {
   
-  axios.get(url)
+  axios.get(url + "/events")
   .then((response => {
 
     setEventsList(convertToDate(response.data));
@@ -49,7 +73,7 @@ const getEvents = () => {
  const updateEvent = (event) => {
    let id = event.id;
 
-  return axios.put(url + "/" + id, event)
+  return axios.put(url + "/events/" + id, event)
    .then((response) => {
 
    })
@@ -77,10 +101,9 @@ const getEvents = () => {
     color: "#ffec6e" //yellow, !Randomize later
   };
 
-  axios.post(url, formEvent)
+  axios.post(url + "/events", formEvent)
   .then((response => {
     triggerReorder(response.data);
-    getEvents();
   }))
   .catch(error => console.error(`Error: ${error}`))
 }
@@ -335,7 +358,7 @@ const convertToDate = (rawEvents) => {
         <Schedule settings = {settings} eventsList = {eventsList}/>
       </ScheduleDiv>
       <FormDiv>
-        <SettingsForm setSettings={setSettings} />
+        <SettingsForm settings = {settings} setSettings={setSettings} />
         <InputForm addEvent = {addEvent}/>
       </FormDiv>
       

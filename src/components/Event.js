@@ -13,10 +13,9 @@ const useStyles = makeStyles((theme) => ({
   }));
   
 
-function Event({details}) {
+function Event({details, settings}) {
 
-
-
+  
   // let details.start_time = new Date(details.start_time);
   // let details.end_time = new Date(details.end_time);
 
@@ -45,7 +44,7 @@ function Event({details}) {
 
     return(
       
-        <EventStyle details={details} startTimeValue = {startTimeValue} endTimeValue = {endTimeValue} length = {length}>
+        <EventStyle details={details} startTimeValue = {startTimeValue} endTimeValue = {endTimeValue} length = {length} startHour = {settings.startHour}>
             <Label onClick={handleClick}>{details.event_name}</Label>
             <Popover
           id={id}
@@ -75,7 +74,7 @@ function Event({details}) {
 
 const EventStyle = styled.div`
     grid-column: ${(props) => props.details.start_col} / span ${(props) => props.details.span};
-    grid-row: ${(props) => (props.startTimeValue -9) * 4 + 2} / span ${(props) => (props.length * 4)};
+    grid-row: ${(props) => (props.startTimeValue - props.startHour) * 4 + 2} / span ${(props) => (props.length * 4)};
     background-color: ${(props) => props.details.color};
 
     display: flex;

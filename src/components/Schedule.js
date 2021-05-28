@@ -9,7 +9,7 @@ function Schedule(props) {
 
     let {settings, eventsList} = props;
   
-    // console.log(eventsList[0]);
+
 
     const days = [
         'Sun',
@@ -89,7 +89,7 @@ function Schedule(props) {
             {hourLabels}
             {hours}
              {eventsList.map(listing => { 
-                    return <Event key = {listing.id} details = {listing}/>;
+                    return <Event key = {listing.id} details = {listing} settings={settings}/>;
                  })}
                  
                 

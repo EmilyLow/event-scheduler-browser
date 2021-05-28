@@ -18,25 +18,51 @@ const useStyles = makeStyles(theme => ({
     },
   }));
 
-  function SettingsForm({setSettings}) {
+  function SettingsForm({settings, setSettings}) {
       //{settings, setSettings}
     // console.log("Settings Form date: ", settings.startDate.getDate());
+    // console.log(settings);
 
     const classes = useStyles();
     const {handleSubmit, control } = useForm();
 
    const onSubmit = data => {
-       
+    console.log("Settings start", settings);
+       console.log("Input", data);
         // console.log("Data: ", data);
         let settingsData = data;
         //The T00:00 serves to put the date in local time
         let enteredDate = new Date(data.calStartDate + "T00:00");
-       setSettings({ 
-        dayNum: data.dayNumber,
-        hourNum: data.dayLength,
-        startHour: data.schedStartTime,
-        startDate: enteredDate
-      });
+        
+      //  setSettings({ 
+      //   dayNum: data.dayNumber,
+      //   hourNum: data.dayLength,
+      //   startHour: data.schedStartTime,
+      //   startDate: enteredDate
+      // });
+      
+      // console.log({dayNum: data.dayNumber, thing: data.schedStartTime, thing2: 3});
+
+      //One at a timen
+      //Okay so 'StartHour' is the broken one, because its a string
+        setSettings({ 
+      dayNum: data.dayNumber,
+      hourNum: data.dayLength,
+      startHour: parseInt(data.schedStartTime),
+      startDate: enteredDate
+    })
+    //Something about format of num
+    
+    // the same as presets
+    //Editing this directly works fine
+    // setSettings({ 
+    //   dayNum: 3,
+    //   hourNum: 13,
+    //   startHour: 9,
+    //   startDate: new Date(2021, 4, 7)
+    // })
+
+    console.log("Settings end", settings);
 
     };  
 
