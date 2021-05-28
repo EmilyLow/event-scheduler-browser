@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     },
   }));
 
-  function SettingsForm({settings, setSettings}) {
+  function SettingsForm({settings, updateSettings}) {
       //{settings, setSettings}
     // console.log("Settings Form date: ", settings.startDate.getDate());
     // console.log(settings);
@@ -45,7 +45,8 @@ const useStyles = makeStyles(theme => ({
 
       //One at a timen
       //Okay so 'StartHour' is the broken one, because its a string
-        setSettings({ 
+        updateSettings({ 
+      id: settings.id,
       dayNum: data.dayNumber,
       hourNum: data.dayLength,
       startHour: parseInt(data.schedStartTime),
@@ -72,7 +73,7 @@ const useStyles = makeStyles(theme => ({
                 <Controller
                 name="calStartDate"
                 control={control}
-                defaultValue="2021-04-07"
+                defaultValue="2021-05-07"
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <TextField
                 label="Calendar Start Date"

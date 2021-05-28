@@ -13,14 +13,12 @@ function App() {
     dayNum: 3,
     hourNum: 13,
     startHour: 9,
-    startDate: new Date(2021, 4, 7)
+    startDate: new Date(2021, 6, 7)
   });
  
-  
-
   const [eventsList, setEventsList] = useState([]);
 
-  // const url = 'http://localhost:3001/events';
+
   const url = 'http://localhost:3001';
 
   useEffect(() => {
@@ -53,7 +51,27 @@ function App() {
    .catch(error => console.error(`Error: ${error}`))
  }
 
- const updateSettings = () => {
+ const updateSettings = (newSettings) => {
+   console.log("Update settings called");
+  let id = newSettings.id;
+
+  let renamed = {
+    id: id,
+    day_number: newSettings.dayNum,
+    hour_number: newSettings.hourNum,
+    start_hour: newSettings.startHour,
+    //I think this does it automatically
+    start_date: newSettings.startDate
+  }
+
+  axios.put(url + "/settings/" + id, renamed)
+  .then((response) => {
+    // console.log(response);
+    //Maybe not best practice
+    setSettings(newSettings);
+
+  })
+  .catch(error => console.error(`Error: ${error}`))
 
  };
 
@@ -72,10 +90,12 @@ const getEvents = () => {
  //This creates a promise to update the event, and does not actually update it directly. 
  const updateEvent = (event) => {
    let id = event.id;
-
+   
+    console.log("UpdateEvent", event);
   return axios.put(url + "/events/" + id, event)
    .then((response) => {
-
+    // console.log("Update");
+    // console.log(response)
    })
    .catch(error => console.error(`Error: ${error}`))
  }
@@ -84,7 +104,7 @@ const getEvents = () => {
  const  addEvent = (event) => {
  
 
-
+  //! This might not be necessary?
   let formStart =  localStringToUTCString(event.start_time).replace('T', ' ');
   let formEnd = localStringToUTCString(event.end_time).replace('T', ' ');
 
@@ -98,11 +118,12 @@ const getEvents = () => {
     location: event.location,
     start_time: formStart,
     end_time: formEnd,
-    color: "#ffec6e" //yellow, !Randomize later
+    color: getRandomColor()
   };
 
   axios.post(url + "/events", formEvent)
   .then((response => {
+    
     triggerReorder(response.data);
   }))
   .catch(error => console.error(`Error: ${error}`))
@@ -123,7 +144,7 @@ const getEvents = () => {
   
 
     let  promises = organized.map(async event => {
-
+      // console.log("Looping promises");
       return await updateEvent(event);;
     })
 
@@ -349,6 +370,13 @@ const convertToDate = (rawEvents) => {
   return eventsOnDay;
 }
 
+ function getRandomColor() {
+   let colors = ["#ffb3ba", "#ffdfba", "#ffffba", "#baffc9", "#bae1ff" ];
+
+   let num = Math.floor(Math.random() * colors.length);
+
+   return colors[num];
+ }
 
 
   return (
@@ -358,7 +386,7 @@ const convertToDate = (rawEvents) => {
         <Schedule settings = {settings} eventsList = {eventsList}/>
       </ScheduleDiv>
       <FormDiv>
-        <SettingsForm settings = {settings} setSettings={setSettings} />
+        <SettingsForm settings = {settings} updateSettings = {updateSettings} />
         <InputForm addEvent = {addEvent}/>
       </FormDiv>
       
