@@ -440,7 +440,7 @@ const convertToDate = (rawEvents) => {
       </ScheduleDiv>
       <FormDiv>
         <SettingsForm settings = {settings} updateSettings = {updateSettings} />
-        <InputForm addEvent = {addEvent}/>
+        <InputForm addEvent = {addEvent} settings={settings}/>
       </FormDiv>
       
     </LayoutDiv>

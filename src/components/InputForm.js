@@ -21,6 +21,10 @@ const useStyles = makeStyles(theme => ({
 
 
 function InputForm(props) {
+
+  let {settings} = props;
+  // console.log(settings);
+
     const classes = useStyles();
      const {handleSubmit, control } = useForm();
     
@@ -32,12 +36,41 @@ function InputForm(props) {
 
  function testVal(v) {
    console.log("Testval", v);
-   return false;
+   return true;
  }
 
  function testDate(v) {
    console.log("Testdate", v);
-   return false;
+   return true;
+ }
+
+ //Checks whether the given input is within the range given by the settings.
+ function checkInputRange(sDate) {
+  let pDate = new Date(sDate);
+  let scheduleStart = new Date(settings.startDate);
+  scheduleStart.setHours(settings.startHour);
+
+  let scheduleEnd = new Date(scheduleStart);
+  scheduleEnd.setHours(settings.startHour + settings.hourNum);
+
+  console.log('pDate', pDate);
+  console.log(scheduleStart);
+  console.log(scheduleEnd);
+
+  if(pDate >= scheduleStart && pDate <= scheduleEnd) {
+    return true;
+  }
+  else {
+    return false;
+  }
+ }
+
+ function checkEventLength(sDate) {
+
+ }
+
+ function checkSingleDay() {
+
  }
 
     return(
@@ -60,10 +93,7 @@ function InputForm(props) {
             helperText={error ? error.message : null}
           />
             )}
-            rules={{ required: 'Title required', minLength: {
-              value: 1,
-              message: 'Too short' 
-            }, validate: v => testVal(v) || "Invalid"}}
+            rules={{ required: 'Title required'}}
             />
 
         <Controller
@@ -81,8 +111,7 @@ function InputForm(props) {
             helperText={error ? error.message : null}
           />
             )}
-            rules={{ validate: { test1: v => testDate(v) || "Invalid", test2: v => testVal(v) 
-         || "invalid 2"}}}
+            rules={{ validate: v => checkInputRange(v) || "Date outside selected range."}}
             />
 
     <Controller
@@ -100,7 +129,7 @@ function InputForm(props) {
             helperText={error ? error.message : null}
           />
             )}
-            rules={{ required: 'Title required' }}
+           rules={{ validate: v => checkInputRange(v) || "Date outside selected range."}}
             />
 
             <Controller
