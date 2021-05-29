@@ -225,7 +225,7 @@ const convertToDate = (rawEvents) => {
    //Answer: The column is static. So if calendar start date adjusts, events will be based off their previous placement. 
    //So solution is actually to "organize events" after a settings change
     let dayNum = dateDiff(settings.startDate, rawEvents[0].start_time);
-    console.log("Day num", dayNum);
+    // console.log("Day num", dayNum);
     let colOffset = 2;
     
     let baseColumn = dayNum * 12 + colOffset;

@@ -19,53 +19,54 @@ const useStyles = makeStyles(theme => ({
   }));
 
   function SettingsForm({settings, updateSettings}) {
-      //{settings, setSettings}
-    // console.log("Settings Form date: ", settings.startDate.getDate());
-    // console.log(settings);
+  
 
     const classes = useStyles();
-    const {handleSubmit, control } = useForm();
+    const {handleSubmit, control, watch } = useForm();
+
+    let watchStartTime = watch("schedStartTime", "");
 
    const onSubmit = data => {
-    // console.log("Settings start", settings);
-    //    console.log("Input", data);
-        // console.log("Data: ", data);
+    console.log(data);
         let settingsData = data;
         //The T00:00 serves to put the date in local time
         let enteredDate = new Date(data.calStartDate + "T00:00");
         
-      //  setSettings({ 
-      //   dayNum: data.dayNumber,
-      //   hourNum: data.dayLength,
-      //   startHour: data.schedStartTime,
-      //   startDate: enteredDate
-      // });
-      
-      // console.log({dayNum: data.dayNumber, thing: data.schedStartTime, thing2: 3});
-
-      //One at a timen
-      //Okay so 'StartHour' is the broken one, because its a string
+     
         updateSettings({ 
       id: settings.id,
-      dayNum: data.dayNumber,
-      hourNum: data.dayLength,
+      dayNum: Math.floor(data.dayNumber),
+      hourNum: Math.floor(data.dayLength),
       startHour: parseInt(data.schedStartTime),
       startDate: enteredDate
     })
-    //Something about format of num
-    
-    // the same as presets
-    //Editing this directly works fine
-    // setSettings({ 
-    //   dayNum: 3,
-    //   hourNum: 13,
-    //   startHour: 9,
-    //   startDate: new Date(2021, 4, 7)
-    // })
 
-    console.log("Settings end", settings);
+    //If start date changed, recalculate/reorganize on all days
+    //If number of days decreased, delete events on day
+    //If scheduled start time moved later, delete relevant events.
+    //If scheduled start time moves, adjust all event positions
+    //If day length shortened, delete relevant events. 
+  
+    //Input checks
+    //Number of days > 0 and < 8. Must be a whole number (or auto round?)
+    //Start time, whole number. <= 23
+    //Day Length. Start time + day length cannot go past midnight
+
+
 
     };  
+
+
+    function checkEnd(dayLength) {
+      console.log(dayLength);
+      console.log(watchStartTime);
+      if((parseInt(dayLength) + parseInt(watchStartTime)) > 23) {
+        console.log((dayLength + watchStartTime))
+        return false;
+      } else {
+        return true;
+      }
+    }
 
     return(
         <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
@@ -85,7 +86,10 @@ const useStyles = makeStyles(theme => ({
                 helperText={error ? error.message : null}
                 />
                 )}
-                rules={{ required: 'Calendar start date required' }}
+                rules={{ 
+                  required: 'Calendar start date required.'
+                 
+                }}
                 />
 
                 <Controller
@@ -103,7 +107,16 @@ const useStyles = makeStyles(theme => ({
                 helperText={error ? error.message : null}
                 />
                 )}
-                rules={{ required: 'Day length required' }}
+                rules={{ required: 'Day length required',
+                        min: {
+                               value: 1,
+                               message: "The minimum value is 1 day."
+                              },
+                        max: {
+                                value: 7,
+                               message: "The maximum value is 7 days."
+                              }
+              }}
                 />
 
                 <Controller
@@ -121,12 +134,21 @@ const useStyles = makeStyles(theme => ({
                 helperText={error ? error.message : null}
                 />
                 )}
-                rules={{ required: 'Start time required' }}
+                rules={{ required: 'Start time required',
+                          min: {
+                               value: 0,
+                               message: "Value must be between 0 and 23."
+                              },
+                        max: {
+                                value: 23,
+                               message: "Value must be between 0 and 23"
+                              }
+              }}
                 />
                 <Controller
                 name="dayLength"
                 control={control}
-                defaultValue="12"
+                defaultValue="13"
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
                 <TextField
                 label="Day Length (in hours)"
@@ -138,7 +160,9 @@ const useStyles = makeStyles(theme => ({
                 helperText={error ? error.message : null}
                 />
                 )}
-                rules={{ required: 'Day length required' }}
+                rules={{ required: 'Day length required',
+                        validate: v => checkEnd(v) || "Schedule can't extend past midnight."
+              }}
                 />
                 <Button type="submit" variant="contained" >
                 Submit
