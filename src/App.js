@@ -221,9 +221,13 @@ const convertToDate = (rawEvents) => {
   //TODO: Currently only works if < 5 events. Need to add case for > 5 intersections. 
   function organizeEvents(rawEvents) {
 
-   
+   //ToDO: Edit this so its based off listed startDate. But it should be? Hm
+   //Answer: The column is static. So if calendar start date adjusts, events will be based off their previous placement. 
+   //So solution is actually to "organize events" after a settings change
     let dayNum = dateDiff(settings.startDate, rawEvents[0].start_time);
+    console.log("Day num", dayNum);
     let colOffset = 2;
+    
     let baseColumn = dayNum * 12 + colOffset;
 
     let cleanEvents = [];
@@ -252,7 +256,19 @@ const convertToDate = (rawEvents) => {
             cleanEvents[i].start_col = baseColumn;
             addedEvents.push(cleanEvents[i]);
         } else {
-            let defaultSpan = 12/(intIndex.length +1);
+            let defaultSpan;
+            if(intIndex.length < 4) {
+              defaultSpan = 12/(intIndex.length +1);
+            } else if (intIndex.length < 6) {
+              defaultSpan = 2;
+            } else if (intIndex.length < 12) {
+              defaultSpan = 1;
+            } else {
+              defaultSpan = 0;
+              console.log("Error: No more than twelve events can intersect.");
+            }
+            
+
              //Add new event to addedEvents, and add it's index to the list of intersections
              //Once the current event is added, it is now one of the intersecting events
              addedEvents.push(cleanEvents[i]);

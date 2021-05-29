@@ -13,7 +13,7 @@ import Button from "@material-ui/core/Button";
 // <Divider style={{width:'100%'}} light/>
 
 function ContentPane({details, startTimeValue, endTimeValue, deleteEvent}) {
-
+    
     function militaryToStan (milHour, minutes) {
         let minString = minutes;
         if(minString === 0) {
@@ -49,7 +49,7 @@ function ContentPane({details, startTimeValue, endTimeValue, deleteEvent}) {
 
     return(<EventDiv>
         <Grid container>
-             <Grid item xs={12}> <Typography variant={'h5'}>{details.name}</Typography> </Grid>
+             <Grid item xs={12}> <Typography variant={'h5'}>{details.event_name}</Typography> </Grid>
              <Grid item xs={12}><Typography variant={'subtitle1'}> {formattedTime}</Typography> </Grid>
 
              <Grid item xs={12}> <Divider style={{marginBottom:'8px'}} /> </Grid>
@@ -64,7 +64,7 @@ function ContentPane({details, startTimeValue, endTimeValue, deleteEvent}) {
 
             { details.summary !== "" && <Grid item xs = {2}><Subject/> </Grid>}
             { details.summary !== "" && <Grid item xs = {10}><Typography variant = {'body1'}>{details.summary}</Typography></Grid>}
-            <Button variant="outlined" onClick={() => { deleteAction() }}>Delete</Button>
+           <Grid><Button item xs = {4} variant="outlined" onClick={() => { deleteAction() }}>Delete</Button></Grid> 
         </Grid>
             
     </EventDiv>)

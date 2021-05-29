@@ -27,8 +27,8 @@ const useStyles = makeStyles(theme => ({
     const {handleSubmit, control } = useForm();
 
    const onSubmit = data => {
-    console.log("Settings start", settings);
-       console.log("Input", data);
+    // console.log("Settings start", settings);
+    //    console.log("Input", data);
         // console.log("Data: ", data);
         let settingsData = data;
         //The T00:00 serves to put the date in local time

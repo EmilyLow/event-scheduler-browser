@@ -30,6 +30,16 @@ function InputForm(props) {
       addEvent(data);
     }
 
+ function testVal(v) {
+   console.log("Testval", v);
+   return false;
+ }
+
+ function testDate(v) {
+   console.log("Testdate", v);
+   return false;
+ }
+
     return(
        
             
@@ -50,7 +60,10 @@ function InputForm(props) {
             helperText={error ? error.message : null}
           />
             )}
-            rules={{ required: 'Title required' }}
+            rules={{ required: 'Title required', minLength: {
+              value: 1,
+              message: 'Too short' 
+            }, validate: v => testVal(v) || "Invalid"}}
             />
 
         <Controller
@@ -68,7 +81,8 @@ function InputForm(props) {
             helperText={error ? error.message : null}
           />
             )}
-            rules={{ required: 'Title required' }}
+            rules={{ validate: { test1: v => testDate(v) || "Invalid", test2: v => testVal(v) 
+         || "invalid 2"}}}
             />
 
     <Controller
