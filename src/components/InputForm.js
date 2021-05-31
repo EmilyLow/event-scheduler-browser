@@ -23,13 +23,11 @@ const useStyles = makeStyles(theme => ({
 function InputForm(props) {
 
   let {settings, addEvent} = props;
-  // console.log(settings);
+ 
 
     const classes = useStyles();
     const {handleSubmit, control, watch } = useForm();
     
-    // let startTime = useRef({});
-    // startTime.current = watch("start_time", "");
 
     let watchStartTime = watch("start_time", "");
 
@@ -60,9 +58,7 @@ function InputForm(props) {
   
   scheduleEnd.setHours(settings.startHour + settings.hourNum);
 
-  // console.log('pDate', pDate);
-  // console.log("start", scheduleStart);
-  // console.log("end", scheduleEnd);
+
 
   if(pDate >= scheduleStart && pDate <= scheduleEnd) {
     return true;

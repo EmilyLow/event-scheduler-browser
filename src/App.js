@@ -15,9 +15,6 @@ function App() {
     startHour: 9,
     startDate: new Date(2021, 6, 7)
   });
-
-  //There's some reason this is a bad idea;
-  let priorSettings = [];
  
   const [eventsList, setEventsList] = useState([]);
 
@@ -30,10 +27,9 @@ function App() {
 
   }, []);
 
-  //Except this only works on arrays. wow. 
+ 
   useEffect(() => {
-    console.log("Use effect settings", settings);
-    triggerSettingsReorder(priorSettings);
+    triggerSettingsReorder();
   }, [settings]);
 
 //!Why this does't work feels worth figuring out for later
@@ -65,26 +61,20 @@ function App() {
  
   let id = newSettings.id;
 
-  let priorSettings2 = {...settings};
-
   let renamed = {
     id: id,
     day_number: newSettings.dayNum,
     hour_number: newSettings.hourNum,
     start_hour: newSettings.startHour,
-    //I think this does it automatically
+
     start_date: newSettings.startDate
   }
 
   axios.put(url + "/settings/" + id, renamed)
-  .then( async (response) => {
+  .then(  (response) => {
 
     //Maybe not best practice (since I'm using existing var and not return).
-    await setSettings(newSettings);
-    // console.log("New settings", newSettings);
-    console.log("Right after setSEttings", settings);
-    // triggerSettingsReorder(priorSettings);
-    priorSettings = priorSettings2;
+     setSettings(newSettings);
 
   })
   .catch(error => console.error(`Error: ${error}`))
@@ -103,12 +93,12 @@ const getEvents = () => {
 }
 
  const getWithoutUpdate = async () => {
-  //  console.log("Get Without Update Called");
+
    let results;
 
    await axios.get(url + "/events")
    .then((response) => {
-    // console.log("Get Without Update Then");
+
     results = response.data;
    })
    .catch(error => console.error(`Error: ${error}`))
@@ -134,8 +124,7 @@ const getEvents = () => {
 
   return axios.put(url + "/events/" + id, event)
    .then((response) => {
-    // console.log("Update");
-    // console.log(response)
+
    })
    .catch(error => console.error(`Error: ${error}`))
  }
@@ -200,9 +189,9 @@ const getEvents = () => {
 
   }
 
-  async function triggerSettingsReorder(priorSettings) {
-    console.log("Triggersettingsreorder", settings);
+  async function triggerSettingsReorder() {
     let conditionsMet = true;
+
 
 
 
@@ -212,7 +201,7 @@ const getEvents = () => {
 
       let organized = reorganizeAll(winnowedList);
 
-      // console.log("Organized", organized);
+
      
 
  
@@ -234,7 +223,7 @@ const getEvents = () => {
 
   //Checks and deletes dates that are out of bounds
   async function checkAndDeleteEvents(initList) {
-    console.log("Settings for checkAndDelete", settings);
+
 
     let finalList = []
     
@@ -245,7 +234,7 @@ const getEvents = () => {
           finalList.push(cEvent);
         } else {
           await deleteWithoutUpdate(cEvent);
-          // console.log(cEvent);
+
         }
 
 
@@ -274,34 +263,23 @@ const getEvents = () => {
     return allEvents;
   }
 
-  //TODO: Add hours to check in InputForm
-  //Problem, checking old and not new setting bounds. Why?
+
   function checkInBounds(event) {
 
-    // console.log("Settings for checkInBounds", settings);
-   
-    console.log("Settings", settings);
-    console.log("---------");
-    console.log("Check in bounds", event.event_name);
+
 
     let startTime = event.start_time.getHours() + (event.start_time.getMinutes() / 60);
     let endTime = event.end_time.getHours() + (event.end_time.getMinutes() / 60);
 
     let scheduledStart = settings.startHour;
-    //I think the -1 is right here maybe?
+
     let scheduledEnd = settings.startHour + settings.hourNum;
-    console.log("ScheduledStart", scheduledStart);
-    console.log("ScheduledEnd", scheduledEnd);
-    console.log("startTime", startTime);
-    console.log("endTime", endTime);
+
 
     //Checks if the hours of the day are in bounds
-    //Neglectingt minutes
     if(startTime < scheduledStart || endTime < scheduledStart) {
-      console.log("False 1");
       return false;
     } else if (startTime > scheduledEnd || endTime > scheduledEnd) {
-      console.log("False 2");
       return false; 
     }
 
@@ -317,17 +295,17 @@ const getEvents = () => {
   //This is 0 AM on the day after
   scheduleEndDay.setDate(scheduleStartDay.getDate() + settings.dayNum);
 
-   console.log(scheduleEndDay);
+
   
     if(startDate < scheduleStartDay || endDate < scheduleStartDay) {
       console.log("False 3");
       return false;
     } else if(startDate > scheduleEndDay || endDate > scheduleEndDay) {
-      console.log("False 4");
+
       return false;
     }
 
-    console.log("true");
+
     return true;
   }
 
@@ -359,11 +337,11 @@ const getEvents = () => {
 }
 
 
-//TODO: Remove 2
-const convertToDate = (rawEvents2) => {
+
+const convertToDate = (rawEvents) => {
   let postEvents = [];
 
-  rawEvents2.forEach(event => {
+  rawEvents.forEach(event => {
 
       let newEvent = {...event};
         
@@ -383,11 +361,9 @@ const convertToDate = (rawEvents2) => {
       return [];
     }
 
-   //ToDO: Edit this so its based off listed startDate. But it should be? Hm
-   //Answer: The column is static. So if calendar start date adjusts, events will be based off their previous placement. 
-   //So solution is actually to "organize events" after a settings change
+   
     let dayNum = dateDiff(settings.startDate, rawEvents[0].start_time);
-    // console.log("Day num", dayNum);
+
     let colOffset = 2;
     
     let baseColumn = dayNum * 12 + colOffset;
@@ -475,7 +451,7 @@ const convertToDate = (rawEvents2) => {
                         
                     } else if (x === slots.length -1) {
                         console.log("Error, found no open slot");
-                        // console.log("Erorr on: ", intEvent);
+                     
                         intEvent.start_col = origCol;
                     } else {
                         intEvent.start_col = origCol;
@@ -566,8 +542,8 @@ const convertToDate = (rawEvents2) => {
 
     return Math.round((secondCopy-firstCopy)/(1000*60*60*24));
 }
-//To do: Remove 3
- function getEventsOnDay(rawEvents3, targetDate) {
+
+ function getEventsOnDay(rawEvents, targetDate) {
   let month = targetDate.getMonth();
   let date = targetDate.getDate();
 
@@ -575,7 +551,7 @@ const convertToDate = (rawEvents2) => {
  //Currently a promise
   let eventsOnDay = [];
 
-  rawEvents3.forEach(event => {
+  rawEvents.forEach(event => {
    
 
       if(event.start_time.getMonth() === month && event.start_time.getDate() === date) {
