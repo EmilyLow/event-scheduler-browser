@@ -82,6 +82,8 @@ const EventStyle = styled.div`
   
 `;
 
+//TODO: Fix overflow. I think it isn't working because it has a seperate div from event? Or a seperate height at least because I made the height bigger for more clickable area. 
+//I think it wouldn't push it past the bottom if wasn't doing the height workaround
 //NOTE: width and height are placed at 100% to help with pop-over clicking.
 //This may cause placement weirdness. 
 //This was necessary because popover does not work if it's inside the element that's triggering it (e.g. EventStyle)
@@ -90,8 +92,9 @@ const Label = styled.p`
   text-align: center;
   width: 100%;
   height: 100%;
-  
+
   overflow: hidden;
+  overflow-y: hidden
   
 
 `;

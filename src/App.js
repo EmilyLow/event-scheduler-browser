@@ -15,6 +15,9 @@ function App() {
     startHour: 9,
     startDate: new Date(2021, 6, 7)
   });
+
+  //There's some reason this is a bad idea;
+  let priorSettings = [];
  
   const [eventsList, setEventsList] = useState([]);
 
@@ -26,6 +29,12 @@ function App() {
     getSettings();
 
   }, []);
+
+  //Except this only works on arrays. wow. 
+  useEffect(() => {
+    console.log("Use effect settings", settings);
+    triggerSettingsReorder(priorSettings);
+  }, [settings]);
 
 //!Why this does't work feels worth figuring out for later
 //   useEffect(() => {
@@ -51,9 +60,12 @@ function App() {
    .catch(error => console.error(`Error: ${error}`))
  }
 
- const updateSettings = (newSettings) => {
+ const updateSettings =  (newSettings) => {
+
  
   let id = newSettings.id;
+
+  let priorSettings2 = {...settings};
 
   let renamed = {
     id: id,
@@ -65,10 +77,14 @@ function App() {
   }
 
   axios.put(url + "/settings/" + id, renamed)
-  .then((response) => {
+  .then( async (response) => {
 
-    //Maybe not best practice
-    setSettings(newSettings);
+    //Maybe not best practice (since I'm using existing var and not return).
+    await setSettings(newSettings);
+    // console.log("New settings", newSettings);
+    console.log("Right after setSEttings", settings);
+    // triggerSettingsReorder(priorSettings);
+    priorSettings = priorSettings2;
 
   })
   .catch(error => console.error(`Error: ${error}`))
@@ -98,6 +114,17 @@ const getEvents = () => {
    .catch(error => console.error(`Error: ${error}`))
 
    return results;
+ }
+
+ const deleteWithoutUpdate = async (event) => {
+  let id = event.id;
+
+  axios.delete(url + "/events/" + id)
+  .then(() => {
+    //Does it need to return something, to show it's done?
+    return 1; 
+  })
+   .catch(error => console.error(`Error: ${error}`))
  }
 
  //This creates a promise to update the event, and does not actually update it directly. 
@@ -173,6 +200,137 @@ const getEvents = () => {
 
   }
 
+  async function triggerSettingsReorder(priorSettings) {
+    console.log("Triggersettingsreorder", settings);
+    let conditionsMet = true;
+
+
+
+    if(conditionsMet) {
+
+      let winnowedList = await checkAndDeleteEvents(eventsList);
+
+      let organized = reorganizeAll(winnowedList);
+
+      // console.log("Organized", organized);
+     
+
+ 
+      //Update all
+
+      let  promises = organized.map(async event => {
+ 
+        return await updateEvent(event);;
+      })
+  
+      Promise.all(promises)
+      .then(() => {
+        getEvents();
+      })
+    }
+
+
+  }
+
+  //Checks and deletes dates that are out of bounds
+  async function checkAndDeleteEvents(initList) {
+    console.log("Settings for checkAndDelete", settings);
+
+    let finalList = []
+    
+    for(let i = 0; i < initList.length; i++) {
+        let cEvent = initList[i];
+
+        if(checkInBounds(cEvent)) {
+          finalList.push(cEvent);
+        } else {
+          await deleteWithoutUpdate(cEvent);
+          // console.log(cEvent);
+        }
+
+
+    }
+
+    return finalList;
+
+  }
+
+  
+
+  //Reorganizes all dates
+  function reorganizeAll(unorganizedList) {
+    let startDate = new Date(settings.startDate);
+    let allEvents = [];
+    for(let i = 0; i <settings.dayNum; i++) {
+      let currentDate = new Date(startDate);
+      currentDate.setDate(startDate.getDate() + i);
+
+      let eventSubset = getEventsOnDay(unorganizedList, currentDate);
+      let organizedSubset = organizeEvents(eventSubset);
+
+      allEvents = [...allEvents, ...organizedSubset];
+    }
+
+    return allEvents;
+  }
+
+  //TODO: Add hours to check in InputForm
+  //Problem, checking old and not new setting bounds. Why?
+  function checkInBounds(event) {
+
+    // console.log("Settings for checkInBounds", settings);
+   
+    console.log("Settings", settings);
+    console.log("---------");
+    console.log("Check in bounds", event.event_name);
+
+    let startTime = event.start_time.getHours() + (event.start_time.getMinutes() / 60);
+    let endTime = event.end_time.getHours() + (event.end_time.getMinutes() / 60);
+
+    let scheduledStart = settings.startHour;
+    //I think the -1 is right here maybe?
+    let scheduledEnd = settings.startHour + settings.hourNum;
+    console.log("ScheduledStart", scheduledStart);
+    console.log("ScheduledEnd", scheduledEnd);
+    console.log("startTime", startTime);
+    console.log("endTime", endTime);
+
+    //Checks if the hours of the day are in bounds
+    //Neglectingt minutes
+    if(startTime < scheduledStart || endTime < scheduledStart) {
+      console.log("False 1");
+      return false;
+    } else if (startTime > scheduledEnd || endTime > scheduledEnd) {
+      console.log("False 2");
+      return false; 
+    }
+
+
+  let startDate = new Date(event.start_time);
+  let endDate = new Date(event.end_time);
+
+  let scheduleStartDay = new Date(settings.startDate);
+  scheduleStartDay.setHours(0);
+  scheduleStartDay.setMinutes(0);
+
+  let scheduleEndDay = new Date(scheduleStartDay);
+  //This is 0 AM on the day after
+  scheduleEndDay.setDate(scheduleStartDay.getDate() + settings.dayNum);
+
+   console.log(scheduleEndDay);
+  
+    if(startDate < scheduleStartDay || endDate < scheduleStartDay) {
+      console.log("False 3");
+      return false;
+    } else if(startDate > scheduleEndDay || endDate > scheduleEndDay) {
+      console.log("False 4");
+      return false;
+    }
+
+    console.log("true");
+    return true;
+  }
+
   async function triggerDeleteReorder(deletedEvent) {
     
     let remainingEvents =  await getWithoutUpdate();
@@ -201,11 +359,11 @@ const getEvents = () => {
 }
 
 
-
-const convertToDate = (rawEvents) => {
+//TODO: Remove 2
+const convertToDate = (rawEvents2) => {
   let postEvents = [];
 
-  rawEvents.forEach(event => {
+  rawEvents2.forEach(event => {
 
       let newEvent = {...event};
         
@@ -218,8 +376,12 @@ const convertToDate = (rawEvents) => {
   return postEvents;
 }
 
-  //TODO: Currently only works if < 5 events. Need to add case for > 5 intersections. 
+  //Note, assumes all events are on a single day
   function organizeEvents(rawEvents) {
+
+    if(rawEvents.length === 0) {
+      return [];
+    }
 
    //ToDO: Edit this so its based off listed startDate. But it should be? Hm
    //Answer: The column is static. So if calendar start date adjusts, events will be based off their previous placement. 
@@ -404,14 +566,16 @@ const convertToDate = (rawEvents) => {
 
     return Math.round((secondCopy-firstCopy)/(1000*60*60*24));
 }
- function getEventsOnDay(rawEvents, targetDate) {
+//To do: Remove 3
+ function getEventsOnDay(rawEvents3, targetDate) {
   let month = targetDate.getMonth();
   let date = targetDate.getDate();
 
 
+ //Currently a promise
   let eventsOnDay = [];
 
-  rawEvents.forEach(event => {
+  rawEvents3.forEach(event => {
    
 
       if(event.start_time.getMonth() === month && event.start_time.getDate() === date) {

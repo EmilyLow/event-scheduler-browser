@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     let watchStartTime = watch("schedStartTime", "");
 
    const onSubmit = data => {
-    console.log(data);
+    // console.log(data);
         let settingsData = data;
         //The T00:00 serves to put the date in local time
         let enteredDate = new Date(data.calStartDate + "T00:00");
@@ -47,11 +47,7 @@ const useStyles = makeStyles(theme => ({
     //If scheduled start time moves, adjust all event positions
     //If day length shortened, delete relevant events. 
   
-    //Input checks
-    //Number of days > 0 and < 8. Must be a whole number (or auto round?)
-    //Start time, whole number. <= 23
-    //Day Length. Start time + day length cannot go past midnight
-
+   
 
 
     };  
