@@ -27,7 +27,6 @@ const useStyles = makeStyles(theme => ({
     let watchStartTime = watch("schedStartTime", "");
 
    const onSubmit = data => {
-    // console.log(data);
         let settingsData = data;
         //The T00:00 serves to put the date in local time
         let enteredDate = new Date(data.calStartDate + "T00:00");
@@ -54,8 +53,7 @@ const useStyles = makeStyles(theme => ({
 
 
     function checkEnd(dayLength) {
-      console.log(dayLength);
-      console.log(watchStartTime);
+
       if((parseInt(dayLength) + parseInt(watchStartTime)) > 23) {
         console.log((dayLength + watchStartTime))
         return false;
