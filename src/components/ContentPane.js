@@ -12,7 +12,11 @@ import Button from "@material-ui/core/Button";
 
 // <Divider style={{width:'100%'}} light/>
 
-function ContentPane({details, startTimeValue, endTimeValue, deleteEvent}) {
+function ContentPane({details, deleteEvent}) {
+
+    console.log(details);
+
+   
     
     function militaryToStan (milHour, minutes) {
         let minString = minutes;
@@ -37,11 +41,23 @@ function ContentPane({details, startTimeValue, endTimeValue, deleteEvent}) {
         'Sat'
     ];
 
+    let formattedStart;
+    let formattedEnd;
+    let formattedDate;
+    let formattedTime;
 
-    const formattedStart = militaryToStan(startTimeValue.getHours(), startTimeValue.getMinutes());
-    const formattedEnd = militaryToStan(endTimeValue.getHours(), endTimeValue.getMinutes());
-    const formattedDate = "" + days[startTimeValue.getDay()] + ", " +(startTimeValue.getMonth() + 1) + "/" + startTimeValue.getDate() + "/" + startTimeValue.getFullYear();
-    const formattedTime = formattedStart + " to " + formattedEnd + ", " + formattedDate;
+    if(Object.keys(details).length != 0) {
+        // console.log("In if");
+        // console.log(details);
+        let startTimeValue = details.start_time;
+        let endTimeValue = details.end_time;
+        // console.log(startTimeValue);
+        formattedStart = militaryToStan(startTimeValue.getHours(), startTimeValue.getMinutes());
+        formattedEnd = militaryToStan(endTimeValue.getHours(), endTimeValue.getMinutes());
+        formattedDate = "" + days[startTimeValue.getDay()] + ", " +(startTimeValue.getMonth() + 1) + "/" + startTimeValue.getDate() + "/" + startTimeValue.getFullYear();
+        formattedTime = formattedStart + " to " + formattedEnd + ", " + formattedDate;
+    }
+
 
     function deleteAction() {
         deleteEvent(details);

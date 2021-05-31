@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
   }));
   
 
-function Event({details, settings, deleteEvent}) {
+function Event({details, settings, deleteEvent, handleClick}) {
 
 
 
@@ -23,25 +23,28 @@ function Event({details, settings, deleteEvent}) {
     let length = endTimeValue - startTimeValue;
 
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    // const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const handleClick = (event) => {
-        console.log("click");
-        setAnchorEl(event.currentTarget);
-    };
+    // const handleClick = (event, pDetails) => {
+    //     console.log("click");
+    //     console.log("Details", pDetails);
+    //     setAnchorEl(event.currentTarget);
+    // };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    // const handleClose = () => {
+    //     setAnchorEl(null);
+    // };
 
-    const open = Boolean(anchorEl);
-    const id = open ? "simple-popover" : undefined;
+    // const open = Boolean(anchorEl);
+    // const id = open ? "simple-popover" : undefined;
 
     return(
       
-        <EventStyle details={details} startTimeValue = {startTimeValue} endTimeValue = {endTimeValue} length = {length} startHour = {settings.startHour}>
-            <Label onClick={handleClick}>{details.event_name}</Label>
-            <Popover
+        <EventStyle onClick={ e => handleClick(e, details)} details={details} startTimeValue = {startTimeValue} endTimeValue = {endTimeValue} length = {length} startHour = {settings.startHour}>
+
+            <Label>{details.event_name}</Label>
+            {/* <Label onClick={ e => handleClick(e, details)}>{details.event_name}</Label> */}
+            {/* <Popover
           id={id}
           open={open}
           anchorEl={anchorEl}
@@ -61,7 +64,7 @@ function Event({details, settings, deleteEvent}) {
             <ContentPane details = {details} startTimeValue = {details.start_time} endTimeValue = {details.end_time} deleteEvent={deleteEvent}/>
                
          
-        </Popover>
+        </Popover> */}
         </EventStyle>
     );
 }

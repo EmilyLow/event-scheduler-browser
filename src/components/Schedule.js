@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import axios from 'axios';
 import { useEffect, useState } from "react";
+import Popover from '@material-ui/core/Popover';
+import React from "react";
+import ContentPane from "./ContentPane";
 
 
 import Event from "./Event";
@@ -9,7 +12,24 @@ function Schedule(props) {
 
     let {settings, eventsList, deleteEvent} = props;
 //    console.log(eventsList[0]);
+const [anchorEl, setAnchorEl] = React.useState(null);
+ const [popContents, setPopContents] = React.useState({});
 
+const handleClick = (event, pDetails) => {
+    // console.log("click");
+    // console.log("Details", pDetails);
+    setAnchorEl(event.currentTarget);
+    setPopContents(pDetails);
+};
+
+const handleClose = () => {
+    // console.log(popContents);
+    setAnchorEl(null);
+    setPopContents({});
+};
+
+const open = Boolean(anchorEl);
+const id = open ? "simple-popover" : undefined;
 
     const days = [
         'Sun',
@@ -86,9 +106,30 @@ function Schedule(props) {
             {hourLabels}
             {hours}
              {eventsList.map(listing => { 
-                    return <Event key = {listing.id} details = {listing} settings={settings} deleteEvent = {deleteEvent}/>;
+                    return <Event handleClick = {handleClick} key = {listing.id} details = {listing} settings={settings} deleteEvent = {deleteEvent}/>;
                  })}
-                 
+                 <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center"
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center"
+          }}
+          PaperProps={{
+            style: { width: '300px' },
+          }}
+        >
+            {/* <ContentPane details = {popContents}  startTimeValue = {popContents.startTime} endTimeValue = {popContents.endTime} deleteEvent={deleteEvent}/> */}
+            <ContentPane details = {popContents}  deleteEvent={deleteEvent}/>
+            
+         
+        </Popover>
                 
         </ScheduleContainer>
     );

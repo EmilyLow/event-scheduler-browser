@@ -39,15 +39,7 @@ const useStyles = makeStyles(theme => ({
       startHour: parseInt(data.schedStartTime),
       startDate: enteredDate
     })
-
-    //If start date changed, recalculate/reorganize on all days
-    //If number of days decreased, delete events on day
-    //If scheduled start time moved later, delete relevant events.
-    //If scheduled start time moves, adjust all event positions
-    //If day length shortened, delete relevant events. 
-  
    
-
 
     };  
 
@@ -55,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     function checkEnd(dayLength) {
 
       if((parseInt(dayLength) + parseInt(watchStartTime)) > 23) {
-        console.log((dayLength + watchStartTime))
+
         return false;
       } else {
         return true;
