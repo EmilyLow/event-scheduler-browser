@@ -120,6 +120,18 @@ function InputForm(props) {
   }
  }
 
+ function checkFifteen(sDate) {
+  let fDate = new Date(sDate);
+  let  minutes = fDate.getMinutes();
+
+  if(minutes === 0 || minutes%15 === 0) {
+    return true;
+  } else {
+    return false;
+  }
+
+ }
+
     return(
        
             
@@ -159,7 +171,10 @@ function InputForm(props) {
           />
             )}
             rules={{ validate: { range: v => checkInputRange(v) || "Date outside selected range.", 
-                      time: v => allowedTime(v) || "Time outside chosen range"}}}
+                      time: v => allowedTime(v) || "Time outside chosen range",
+                      fifteen: v => checkFifteen(v)|| "Time must be in fifteen minute intervals."}
+                    
+                    }}
             />
 
     <Controller
@@ -183,7 +198,8 @@ function InputForm(props) {
                eventLength: v => checkEventLength(v) || "Event must be greater than 30 minutes.",
                inOrder: v => checkInOrder(v) || "Start time must be before end time.",
                sameDay: v => checkSingleDay(v) || "Event must start and end on same day.",
-               time: v => allowedTime(v) || "Time outside chosen range"
+               time: v => allowedTime(v) || "Time outside chosen range",
+               fifteen: v => checkFifteen(v)|| "Time must be in fifteen minute intervals."
               }}
            } 
             />
