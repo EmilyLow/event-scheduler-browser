@@ -50,9 +50,10 @@ const EventStyle = styled.div`
 
 const Label = styled.p`
   margin: 0px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding-top: 4px;
+  //display: flex;
+  //justify-content: center;
+  //align-items: center;
 
 
   font-size: 14px;

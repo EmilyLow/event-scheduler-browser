@@ -343,6 +343,7 @@ const convertToDate = (rawEvents) => {
       return [];
     }
 
+
    
     let dayNum = dateDiff(settings.startDate, rawEvents[0].start_time);
 
@@ -586,6 +587,7 @@ const FormDiv = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-left: 50px;
 `;
 
 const LayoutDiv = styled.div`
