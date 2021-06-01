@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import axios from 'axios';
-import { useEffect, useState } from "react";
 import Popover from '@material-ui/core/Popover';
 import React from "react";
 import ContentPane from "./ContentPane";
@@ -11,19 +9,17 @@ import Event from "./Event";
 function Schedule(props) {
 
     let {settings, eventsList, deleteEvent} = props;
-//    console.log(eventsList[0]);
+
 const [anchorEl, setAnchorEl] = React.useState(null);
  const [popContents, setPopContents] = React.useState({});
 
 const handleClick = (event, pDetails) => {
-    // console.log("click");
-    // console.log("Details", pDetails);
+
     setAnchorEl(event.currentTarget);
     setPopContents(pDetails);
 };
 
 const handleClose = () => {
-    // console.log(popContents);
     setAnchorEl(null);
     setPopContents({});
 };
@@ -48,8 +44,6 @@ const id = open ? "simple-popover" : undefined;
     for (let i = 0; i < settings.dayNum; i++) {
        for (let j = 0; j < settings.hourNum; j++) {
            //Note! Changing from 0 start to 1 start here.
-           //Consider if this should be done elsewhere, based off how Date() works. 
-           //Removing that for now
         hours.push(<Hour  key = {"hour" + i + j} day={i} hour={j}/>)
      }
     }
@@ -68,12 +62,8 @@ const id = open ? "simple-popover" : undefined;
         }
     }
 
-   
-
- 
 
     let dayLabels = [];
-
     
     
     let labelDate = new Date(settings.startDate.getTime());
@@ -125,8 +115,8 @@ const id = open ? "simple-popover" : undefined;
             style: { width: '300px' },
           }}
         >
-            {/* <ContentPane details = {popContents}  startTimeValue = {popContents.startTime} endTimeValue = {popContents.endTime} deleteEvent={deleteEvent}/> */}
-            <ContentPane details = {popContents}  deleteEvent={deleteEvent}/>
+           
+            <ContentPane details = {popContents}  deleteEvent={deleteEvent} handleClose={handleClose}/>
             
          
         </Popover>

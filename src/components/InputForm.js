@@ -1,7 +1,5 @@
-import React, { useRef } from "react";
-import styled from "styled-components";
+import React from "react";
 import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core';
@@ -132,7 +130,7 @@ function InputForm(props) {
         <Controller
             name="start_time"
             control={control}
-            defaultValue="2021-05-07T10:30"
+            defaultValue="2021-05-07T10:00"
             render={({ field: { onChange, value }, fieldState: { error } }) => (
           <TextField
             label="Start Time"

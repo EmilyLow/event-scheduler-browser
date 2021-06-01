@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import Grid from "@material-ui/core/Grid";
-import Popover from '@material-ui/core/Popover';
 import React from "react";
 import Card from '@material-ui/core/Card';
 import Divider from '@material-ui/core/Divider';
@@ -10,11 +9,11 @@ import PeopleAlt from '@material-ui/icons/PeopleAlt';
 import Subject from '@material-ui/icons/Subject';
 import Button from "@material-ui/core/Button";
 
-// <Divider style={{width:'100%'}} light/>
 
-function ContentPane({details, deleteEvent}) {
 
-    console.log(details);
+function ContentPane({details, deleteEvent, handleClose}) {
+
+    
 
    
     
@@ -47,11 +46,10 @@ function ContentPane({details, deleteEvent}) {
     let formattedTime;
 
     if(Object.keys(details).length != 0) {
-        // console.log("In if");
-        // console.log(details);
+
         let startTimeValue = details.start_time;
         let endTimeValue = details.end_time;
-        // console.log(startTimeValue);
+
         formattedStart = militaryToStan(startTimeValue.getHours(), startTimeValue.getMinutes());
         formattedEnd = militaryToStan(endTimeValue.getHours(), endTimeValue.getMinutes());
         formattedDate = "" + days[startTimeValue.getDay()] + ", " +(startTimeValue.getMonth() + 1) + "/" + startTimeValue.getDate() + "/" + startTimeValue.getFullYear();
@@ -60,7 +58,9 @@ function ContentPane({details, deleteEvent}) {
 
 
     function deleteAction() {
+        handleClose();
         deleteEvent(details);
+        
     }
 
     return(<EventDiv>
