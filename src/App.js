@@ -558,7 +558,7 @@ const convertToDate = (rawEvents) => {
   return (
     <LayoutDiv>
       <ScheduleDiv>
-        <StyledH1>Convention Schedule</StyledH1>
+        <StyledH1>Event Scheduler</StyledH1>
         <Schedule settings = {settings} eventsList = {eventsList} deleteEvent={deleteEvent}/>
       </ScheduleDiv>
       <FormDiv>
