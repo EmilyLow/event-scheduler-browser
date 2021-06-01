@@ -91,13 +91,19 @@ const EventStyle = styled.div`
 //This may cause placement weirdness. 
 //This was necessary because popover does not work if it's inside the element that's triggering it (e.g. EventStyle)
 const Label = styled.p`
+  margin: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+
   font-size: 14px;
   text-align: center;
   width: 100%;
-  height: 100%;
+  //height: 100%;
 
   overflow: hidden;
-  overflow-y: hidden
+  //overflow-y: hidden
   
 
 `;
