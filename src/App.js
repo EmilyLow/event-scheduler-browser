@@ -19,7 +19,9 @@ function App() {
   const [eventsList, setEventsList] = useState([]);
 
 
-  const url = 'http://localhost:3001';
+  // const url = 'http://localhost:3001';
+
+  const url = 'https://event-scheduler-backend-el.herokuapp.com';
 
   useEffect(() => {
     getEvents();
