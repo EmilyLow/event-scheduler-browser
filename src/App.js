@@ -6,6 +6,13 @@ import Schedule from "./components/Schedule";
 import InputForm from "./components/InputForm";
 import SettingsForm from "./components/SettingsForm";
 
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import AppBar from '@material-ui/core/AppBar';
+import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
+
 
 function App() {
   
@@ -556,6 +563,12 @@ const convertToDate = (rawEvents) => {
    return colors[num];
  }
 
+ //Tab formatting code
+ const [value, setValue] = useState(0);
+
+ const handleChange = (event, newValue) => {
+   setValue(newValue);
+ };
 
   return (
     <LayoutDiv>
@@ -563,12 +576,53 @@ const convertToDate = (rawEvents) => {
         <StyledH1>Event Scheduler</StyledH1>
         <Schedule settings = {settings} eventsList = {eventsList} deleteEvent={deleteEvent}/>
       </ScheduleDiv>
-      <FormDiv>
+      {/* <FormDiv>
         <SettingsForm settings = {settings} updateSettings = {updateSettings} />
         <InputForm addEvent = {addEvent} settings={settings}/>
-      </FormDiv>
+      </FormDiv> */}
+        <div >
+          <Tabs value = {value} onChange={handleChange}>
+
+            <Tab label="Events"/>
+              
+            
+            <Tab label="Settings"/>
+            
+            
+          </Tabs>
+          <TabPanel value={value} index={0}>
+            <InputForm addEvent = {addEvent} settings={settings}/>
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <SettingsForm settings = {settings} updateSettings = {updateSettings} />
+          </TabPanel>
+        </div>
+         
+        
+        
+     
       
     </LayoutDiv>
+  );
+}
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`scrollable-auto-tabpanel-${index}`}
+      aria-labelledby={`scrollable-auto-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
   );
 }
 
