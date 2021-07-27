@@ -554,7 +554,22 @@ const convertToDate = (rawEvents) => {
 }
 
  function getRandomColor() {
-   let colors = ["#ffb3ba", "#ffdfba", "#ffffba", "#baffc9", "#bae1ff" ];
+  //  let colors = ["#ffb3ba", //pink
+  //  "#ffdfba", //orange-peach
+  //  "#ffffba", //yellow
+  //  "#baffc9", //light green
+  //  "#bae1ff" ]; //blue
+
+   let colors = [
+    "#A3F8A3", //darker green
+    "#A8EBF3", //blue
+    "#F3B0A8", //darker pink
+    "#ffec6e", //yellow
+    "#ffdfba", //orange-peach
+
+
+
+   ];
 
    let num = Math.floor(Math.random() * colors.length);
 
@@ -643,8 +658,7 @@ const ScheduleDiv = styled.div`
 
 const FormDiv = styled.div`
   margin-left: 80px;
-  // display: flex;
-  // flex-direction: column;
+
   margin-top: 120px;
 `;
 

@@ -54,8 +54,10 @@ const id = open ? "simple-popover" : undefined;
     }
 
     function militaryToStan (milHour) {
-        if (milHour <= 12) {
+        if (milHour < 12) {
             return "" + milHour + " AM";
+        } else if (milHour === 12) {
+            return "" + milHour + " PM";
         }
         else {
             return "" + (milHour - 12) + " PM";
