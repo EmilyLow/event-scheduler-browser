@@ -137,7 +137,7 @@ function InputForm(props) {
             
             
         <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
-            <Typography variant={'h5'}>Event Form</Typography>
+            
             <Controller
             name="title"
             control={control}

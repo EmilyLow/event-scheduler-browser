@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     //TO DO, add condition to check for out of bounds hours events
     return(
         <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
-            <Typography variant={'h5'}>Settings Form</Typography>
+            
                 <Controller
                 name="calStartDate"
                 control={control}

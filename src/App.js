@@ -6,6 +6,11 @@ import Schedule from "./components/Schedule";
 import InputForm from "./components/InputForm";
 import SettingsForm from "./components/SettingsForm";
 
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Box from '@material-ui/core/Box';
+
+
 
 function App() {
   
@@ -549,13 +554,34 @@ const convertToDate = (rawEvents) => {
 }
 
  function getRandomColor() {
-   let colors = ["#ffb3ba", "#ffdfba", "#ffffba", "#baffc9", "#bae1ff" ];
+  //  let colors = ["#ffb3ba", //pink
+  //  "#ffdfba", //orange-peach
+  //  "#ffffba", //yellow
+  //  "#baffc9", //light green
+  //  "#bae1ff" ]; //blue
+
+   let colors = [
+    "#A3F8A3", //darker green
+    "#A8EBF3", //blue
+    "#F3B0A8", //darker pink
+    "#ffec6e", //yellow
+    "#ffdfba", //orange-peach
+
+
+
+   ];
 
    let num = Math.floor(Math.random() * colors.length);
 
    return colors[num];
  }
 
+ //Tab formatting code
+ const [value, setValue] = useState(0);
+
+ const handleChange = (event, newValue) => {
+   setValue(newValue);
+ };
 
   return (
     <LayoutDiv>
@@ -563,12 +589,56 @@ const convertToDate = (rawEvents) => {
         <StyledH1>Event Scheduler</StyledH1>
         <Schedule settings = {settings} eventsList = {eventsList} deleteEvent={deleteEvent}/>
       </ScheduleDiv>
-      <FormDiv>
+      {/* <FormDiv>
         <SettingsForm settings = {settings} updateSettings = {updateSettings} />
         <InputForm addEvent = {addEvent} settings={settings}/>
-      </FormDiv>
+      </FormDiv> */}
+      
+        <FormDiv >
+            <Tabs value = {value} onChange={handleChange} indicatorColor={"primary"} textColor="primary">
+
+              <Tab label="Events"/>
+                
+              
+              <Tab label="Settings"/>
+              
+              
+            </Tabs>
+            <TabPanel value={value} index={0}>
+              <InputForm addEvent = {addEvent} settings={settings}/>
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              <SettingsForm settings = {settings} updateSettings = {updateSettings} />
+            </TabPanel>
+          </FormDiv>
+  
+      
+         
+        
+        
+     
       
     </LayoutDiv>
+  );
+}
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+     
+      hidden={value !== index}
+      id={`scrollable-auto-tabpanel-${index}`}
+    
+    >
+      {value === index && (
+        <Box >
+          
+          {children}
+        </Box>
+      )}
+    </div>
   );
 }
 
@@ -583,13 +653,18 @@ const ScheduleDiv = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-left: 50px;
 `;
 
 const FormDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-left: 50px;
+  margin-left: 80px;
+
+  margin-top: 120px;
+`;
+
+const FormDivDiv = styled.div`
+ 
+
 `;
 
 const LayoutDiv = styled.div`
