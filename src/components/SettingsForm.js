@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     const classes = useStyles();
     const {handleSubmit, control, watch } = useForm();
 
-    let watchStartTime = watch("schedStartTime", "");
+    let watchStartTime = watch("schedStartTime", "9");
 
    const onSubmit = data => {
         let settingsData = data;
