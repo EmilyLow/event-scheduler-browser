@@ -29,7 +29,7 @@ function InputForm(props) {
     const {handleSubmit, control, watch } = useForm();
     
 
-    let watchStartTime = watch("start_time", "");
+    let watchStartTime = watch("start_time", "2021-05-07T10:00");
 
 
     const onSubmit = data => {
@@ -110,6 +110,7 @@ function InputForm(props) {
  }
 
  function checkInOrder(sDate) {
+
   let date1 = new Date(watchStartTime);
   let date2 = new Date(sDate);
 
