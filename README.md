@@ -1,6 +1,6 @@
 # Event Scheduler
 
-Hosted [here](https://quirky-turing-1d0d2f.netlify.app/). 
+Hosted [here](). 
 
 This project is a customizable calendar designed for displaying events that overlap in time.
 
@@ -8,4 +8,4 @@ The user can specify the calendar's range, setting the start date, start time, n
 
 
 
-
+For demonstration purposes, this version of the project uses local storage. A version of the project that uses a RESTful API can be found [here](https://github.com/EmilyLow/event-scheduler-frontend). 

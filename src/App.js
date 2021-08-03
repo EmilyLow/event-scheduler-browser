@@ -29,6 +29,15 @@ function App() {
   const url = 'https://event-scheduler-backend-el.herokuapp.com';
 
   useEffect(() => {
+
+    if(localStorage.events === undefined) {
+      localStorage.setItem("events", JSON.stringify([]));
+    }
+
+    if(localStorage.settings === undefined) {
+      localStorage.setItem("settings", JSON.stringify({}));
+    }
+
     getEvents();
     getSettings();
 
@@ -86,25 +95,19 @@ function App() {
 
 const getEvents = () => {
   
-  axios.get(url + "/events")
-  .then((response => {
+  let data = JSON.parse(localStorage.events);
 
-    setEventsList(convertToDate(response.data));
+    setEventsList(convertToDate(data));
       
-  }))
-  .catch(error => console.error(`Error: ${error}`))
+  
 }
 
- const getWithoutUpdate = async () => {
+ const getWithoutUpdate = /* async */ () => {
 
-   let results;
+  //?? await
+  // let results = await JSON.parse(localStorage.events);
+   let results = JSON.parse(localStorage.events);
 
-   await axios.get(url + "/events")
-   .then((response) => {
-
-    results = response.data;
-   })
-   .catch(error => console.error(`Error: ${error}`))
 
    return results;
  }
