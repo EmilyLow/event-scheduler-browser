@@ -10,6 +10,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 
+import presetEvents from "./presetEvents";
+
 
 
 function App() {
@@ -26,16 +28,16 @@ function App() {
 
   // const url = 'http://localhost:3001';
 
-  const url = 'https://event-scheduler-backend-el.herokuapp.com';
+  // const url = 'https://event-scheduler-backend-el.herokuapp.com';
 
   useEffect(() => {
 
     if(localStorage.events === undefined) {
-      localStorage.setItem("events", JSON.stringify([]));
+      localStorage.setItem("events", JSON.stringify(presetEvents));
     }
 
     if(localStorage.settings === undefined) {
-      localStorage.setItem("settings", JSON.stringify({}));
+      localStorage.setItem("settings", JSON.stringify(settings));
     }
 
     getEvents();
@@ -50,22 +52,19 @@ function App() {
 
 
  const getSettings = () => {
-   axios.get(url + "/settings")
-   .then((response => {
+ 
     
      
-     let newSettings = {
-      id: response.data[0].id,
-      dayNum: response.data[0].day_number,
-      hourNum: response.data[0].hour_number,
-      startHour: response.data[0].start_hour,
-      startDate: new Date(response.data[0].start_date)
-     }
+    //  let newSettings = {
+    //   id: response.data[0].id,
+    //   dayNum: response.data[0].day_number,
+    //   hourNum: response.data[0].hour_number,
+    //   startHour: response.data[0].start_hour,
+    //   startDate: new Date(response.data[0].start_date)
+    //  }
     
-     setSettings(newSettings);
-   
-   }))
-   .catch(error => console.error(`Error: ${error}`))
+     setSettings(JSON.stringify((localStorage.settings));
+
  }
 
  const updateSettings =  (newSettings) => {
@@ -82,14 +81,9 @@ function App() {
     start_date: newSettings.startDate
   }
 
-  axios.put(url + "/settings/" + id, renamed)
-  .then(  (response) => {
-
-    //Maybe not best practice (since I'm using existing var and not return).
+    
      setSettings(newSettings);
 
-  })
-  .catch(error => console.error(`Error: ${error}`))
 
  };
 
@@ -115,39 +109,57 @@ const getEvents = () => {
  const deleteWithoutUpdate = async (event) => {
   let id = event.id;
 
-  axios.delete(url + "/events/" + id)
-  .then(() => {
-    return 1; 
-  })
-   .catch(error => console.error(`Error: ${error}`))
+  let currentEvents = JSON.parse(localStorage.events);
+
+  for(let i = 0; i < currentEvents.length; i++) {
+    if(currentEvents[i].id === id) {
+      Array.splice(i, 1);
+      break;
+    }
+  }
+
+  
+  localStorage.events = JSON.stringify(currentEvents);
+
  }
 
+ //TODO: Do I need this with local storage?
  //This creates a promise to update the event, and does not actually update it directly. 
- const updateEvent = (event) => {
-   let id = event.id;
+//  const updateEvent = (event) => {
+//    let id = event.id;
    
 
-  return axios.put(url + "/events/" + id, event)
-   .then((response) => {
+//   return axios.put(url + "/events/" + id, event)
+//    .then((response) => {
 
-   })
-   .catch(error => console.error(`Error: ${error}`))
- }
+//    })
+//    .catch(error => console.error(`Error: ${error}`))
+//  }
 
  const deleteEvent = (event) => {
 
    let id = event.id;
 
-   axios.delete(url + "/events/" + id)
-   .then((response) => {
+   let currentEvents = JSON.parse(localStorage.events);
+
+   for(let i = 0; i < currentEvents.length; i++) {
+     if(currentEvents[i].id === id) {
+       Array.splice(i, 1);
+       break;
+     }
+   }
+ 
+   //TODO The order for this is wrong maybe? Depend on how reorder works with local storage
+   localStorage.events = JSON.stringify(currentEvents);
+  
     triggerDeleteReorder(event);
-   })
-   .catch(error => console.error(`Error: ${error}`))
+   
  }
 
 
  const  addEvent = (event) => {
  
+  let currentEvents = JSON.parse(localStorage.events);
 
   let formEvent = {
     event_name: event.title,
@@ -160,12 +172,13 @@ const getEvents = () => {
     color: getRandomColor()
   };
 
-  axios.post(url + "/events", formEvent)
-  .then((response => {
-    
-    triggerReorder(response.data);
-  }))
-  .catch(error => console.error(`Error: ${error}`))
+  let newEvents = [...currentEvents, formEvent];
+
+  localStorage.events = JSON.stringify(newEvents);
+
+  //Feeding it the right thing?
+  triggerReorder(newEvents);
+  
 }
 
 
@@ -174,23 +187,16 @@ const getEvents = () => {
    
 
     let formNewEvent = convertToDate([newEvent])[0];
-    let appEvents = [...eventsList, formNewEvent];
- 
+    let appEvents = convertToDate(localStorage.events);
+    
     let onDay = getEventsOnDay(appEvents, formNewEvent.start_time);
     let organized = organizeEvents(onDay);
 
-    let promiseArray = [...organized];
-  
 
-    let  promises = organized.map(async event => {
- 
-      return await updateEvent(event);;
-    })
+    localStorage.events = JSON.stringify(organized);
 
-    Promise.all(promises)
-    .then(() => {
-      getEvents();
-    })
+
+    setEventsList(organized);
 
   }
 
