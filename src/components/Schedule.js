@@ -10,6 +10,8 @@ function Schedule(props) {
 
     let {settings, eventsList, deleteEvent} = props;
 
+    //console.log("Schedule settings:", settings);
+
 const [anchorEl, setAnchorEl] = React.useState(null);
  const [popContents, setPopContents] = React.useState({});
 

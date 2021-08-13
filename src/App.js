@@ -12,7 +12,11 @@ import Box from '@material-ui/core/Box';
 
 import presetEvents from "./presetEvents";
 
+/*
+  Note:
+  Stringify and parse turn a date object into a string when parsed back. This is not new.
 
+*/
 
 function App() {
   
@@ -20,7 +24,7 @@ function App() {
     dayNum: 3,
     hourNum: 13,
     startHour: 9,
-    startDate: new Date(2021, 6, 7)
+    startDate: new Date(2021, 4, 7)
   });
  
   const [eventsList, setEventsList] = useState([]);
@@ -32,13 +36,15 @@ function App() {
 
   useEffect(() => {
 
-    if(localStorage.events === undefined) {
+    //TODO: Add reset button
+    if(localStorage.events === undefined || localStorage.events === JSON.stringify([])) {
       localStorage.setItem("events", JSON.stringify(presetEvents));
     }
 
     if(localStorage.settings === undefined) {
       localStorage.setItem("settings", JSON.stringify(settings));
     }
+
 
     getEvents();
     getSettings();
@@ -54,19 +60,17 @@ function App() {
  const getSettings = () => {
  
     
-     
-    //  let newSettings = {
-    //   id: response.data[0].id,
-    //   dayNum: response.data[0].day_number,
-    //   hourNum: response.data[0].hour_number,
-    //   startHour: response.data[0].start_hour,
-    //   startDate: new Date(response.data[0].start_date)
-    //  }
-    
-     setSettings(JSON.stringify((localStorage.settings));
+     let stored = JSON.parse(localStorage.settings);
+
+
+    let newSettings = {...stored, startDate: new Date(stored.startDate)};
+
+  
+     setSettings(newSettings);
 
  }
 
+ //TODO: Test update and look at newSettings input
  const updateSettings =  (newSettings) => {
 
  
@@ -82,29 +86,36 @@ function App() {
   }
 
     
-     setSettings(newSettings);
+     setSettings(renamed);
+     localStorage.setItem("settings", JSON.stringify(renamed));
 
 
  };
 
+ //Here
 const getEvents = () => {
   
   let data = JSON.parse(localStorage.events);
+  // console.log(data);
 
-    setEventsList(convertToDate(data));
+  // let converted = convertToDate(data);
+
+  // console.log("Converted", converted);
+
+   setEventsList(convertToDate(data));
       
   
 }
 
- const getWithoutUpdate = /* async */ () => {
+//  const getWithoutUpdate = /* async */ () => {
 
-  //?? await
-  // let results = await JSON.parse(localStorage.events);
-   let results = JSON.parse(localStorage.events);
+//   //?? await
+//   // let results = await JSON.parse(localStorage.events);
+//    let results = JSON.parse(localStorage.events);
 
 
-   return results;
- }
+//    return results;
+//  }
 
  const deleteWithoutUpdate = async (event) => {
   let id = event.id;
@@ -113,7 +124,7 @@ const getEvents = () => {
 
   for(let i = 0; i < currentEvents.length; i++) {
     if(currentEvents[i].id === id) {
-      Array.splice(i, 1);
+      currentEvents.splice(i, 1);
       break;
     }
   }
@@ -201,28 +212,21 @@ const getEvents = () => {
   }
 
   async function triggerSettingsReorder() {
-    let conditionsMet = true;
 
 
-
-
-    if(conditionsMet) {
 
       let winnowedList = await checkAndDeleteEvents(eventsList);
 
       let organized = reorganizeAll(winnowedList);
 
-      let  promises = organized.map(async event => {
+     
  
-        return await updateEvent(event);;
-      })
-  
-      Promise.all(promises)
-      .then(() => {
-        getEvents();
-      })
-    }
+      localStorage.events = JSON.stringify(organized);
 
+
+      setEventsList(organized);
+
+    
 
   }
 
@@ -303,6 +307,8 @@ const getEvents = () => {
 
   
     if(startDate < scheduleStartDay || endDate < scheduleStartDay) {
+      console.log(startDate);
+      console.log(scheduleStartDay);
       console.log("False 3");
       return false;
     } else if(startDate > scheduleEndDay || endDate > scheduleEndDay) {
@@ -316,21 +322,18 @@ const getEvents = () => {
 
   async function triggerDeleteReorder(deletedEvent) {
     
-    let remainingEvents =  await getWithoutUpdate();
+    let remainingEvents = JSON.parse(localStorage.events);
+
     let formRemainingEvents = convertToDate(remainingEvents);
     
     let remainingOnDay = getEventsOnDay(formRemainingEvents, deletedEvent.start_time);
 
     let organized = organizeEvents(remainingOnDay);
 
-    let promises = organized.map(async event => {
-      return await updateEvent(event);
-    })
 
-    Promise.all(promises)
-    .then(() => {
-      getEvents();
-    })
+    setEventsList(organized);
+   
+    localStorage.events = JSON.parse(organized);
   }
 
 
