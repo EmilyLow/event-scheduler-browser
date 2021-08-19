@@ -100,7 +100,8 @@ const id = open ? "simple-popover" : undefined;
             {hourLabels}
             {hours}
              {eventsList.map(listing => { 
-                    return <Event handleClick = {handleClick} key = {listing.id} details = {listing} settings={settings} deleteEvent = {deleteEvent}/>;
+                    
+                    return <Event handleClick = {handleClick} key = {"" + listing.event_name + listing.start_col + listing.start_time} details = {listing} settings={settings} deleteEvent = {deleteEvent}/>;
                  })}
                  <Popover
           id={id}

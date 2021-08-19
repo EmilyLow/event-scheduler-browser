@@ -3,6 +3,7 @@ const presetEvents = [
 
 
       {
+          id: 1,
           event_name: "Opening Ceremony",
           speaker: "Eric Delgado",
           summary: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -14,7 +15,7 @@ const presetEvents = [
           color: "#A3F8A3" //green
       }, 
       {
-          
+          id: 2,
           event_name: "Meet and Greet",
           speaker: "Lila Tucker",
           summary: "Sed vulputate fermentum tellus viverra placerat. Donec vulputate tortor justo, ut congue urna pharetra vel.",
@@ -27,7 +28,7 @@ const presetEvents = [
 
       },
       {
-          
+         id: 3,         
           event_name: "VIP Salon",
           speaker: "Lynn Lambert",
           summary: "Sed sit amet tempus libero.",
@@ -39,7 +40,7 @@ const presetEvents = [
           color: "#F3B0A8" //pink
       },
       {
-           
+           id: 4,
             event_name: "Merchants",
             speaker: "",
             summary: "Curabitur ac egestas tortor",
@@ -52,7 +53,7 @@ const presetEvents = [
             color: "#A8EBF3" //blue
         },
         {
-           
+           id: 5,
             event_name: "Talk A",
             speaker: "Dr. Grace Clayton",
             summary: "",
@@ -65,7 +66,7 @@ const presetEvents = [
             color: "#ffec6e" //yellow
         },
         {
-           
+           id: 6,
             event_name: "Food Trucks",
             speaker: "",
             summary: "",
@@ -78,6 +79,7 @@ const presetEvents = [
             color: "#ffdfba" //orange peach
         },
         {
+            id: 7,
             event_name: "Talk B",
             speaker: "Dr. Jaime Wood",
             summary: "",
@@ -90,6 +92,7 @@ const presetEvents = [
             color: "#ffec6e" //yellow
         }, 
         {
+            id: 8,
             event_name: "Talk C",
             speaker: "Dr. Nathaniel Riley",
             summary: "",
@@ -103,6 +106,7 @@ const presetEvents = [
         },
       
         {
+            id: 9,
             event_name: "Talk D",
             speaker: "Dr. Daniel Parsons ",
             summary: "",
@@ -115,6 +119,7 @@ const presetEvents = [
             color: "#ffec6e" //yellow
         },
         {
+            id: 10,
             event_name: "Talk E",
             speaker: "Dr. Nicholas Carson",
             summary: "Etiam ut consequat orci.",
@@ -127,6 +132,7 @@ const presetEvents = [
             color: "#ffec6e" //yellow
         },
         {
+            id: 11,
             event_name: "Open Panel",
             speaker: "",
             summary: "",
@@ -139,6 +145,7 @@ const presetEvents = [
             color: "#ffdfba" //orange peach
         },
         {
+            id: 12,
             event_name: "Talk F",
             speaker: "Dr. Velma Morales",
             summary: "Nulla finibus ante eget libero congue congue.",
@@ -151,6 +158,7 @@ const presetEvents = [
             color: "#ffec6e" //yellow
         },
         {
+            id: 13,
             event_name: "Open Bar",
             speaker: "",
             summary: "",
@@ -163,6 +171,7 @@ const presetEvents = [
             color: "#A8EBF3" //blue
         },
         {
+            id: 14,
             event_name: "Merchants",
             speaker: "",
             summary: "Curabitur ac egestas tortor",
@@ -175,6 +184,7 @@ const presetEvents = [
             color: "#A8EBF3" //blue
         },
         {
+            id: 15,
             event_name: "Food Trucks",
             speaker: "",
             summary: "",
@@ -187,6 +197,7 @@ const presetEvents = [
             color: "#ffdfba" //orange peach
         },
         {
+            id: 16,
             event_name: "Presentations, Group 1",
             speaker: "Dorothy Rose, Joyce Adkins, and Willie Rodgers",
             summary: "",
@@ -199,6 +210,7 @@ const presetEvents = [
             color: "#F3B0A8" //pink
         },
         {
+            id: 17,
             event_name: "Presentations, Group 2",
             speaker: "Cary Ballard, Dr. Allison Hanson, and Josh Flores",
             summary: "",
@@ -211,6 +223,7 @@ const presetEvents = [
             color: "#F3B0A8" //pink
         },
         {
+            id: 18,
             event_name: "Presentations, Group 3",
             speaker: "Jeanette Jordan, Dr. Sherry Buchanan, and Dr. Lowell Fowler ",
             summary: "",
@@ -223,6 +236,7 @@ const presetEvents = [
             color: "#F3B0A8" //pink
         },
         {
+            id: 19,
             event_name: "Talk",
             speaker: "Anna Ramsey",
             summary: "",
@@ -235,6 +249,7 @@ const presetEvents = [
             color: "#ffec6e" //yellow
         },
         {
+            id: 20,
             event_name: "Open Panel",
             speaker: "Dr. Velma Morales, Eric Delgado, Dr. Grace Clayton, and Jeanette Jordan",
             summary: "",
@@ -247,6 +262,7 @@ const presetEvents = [
             color: "#ffdfba" //orange peach
         },
         {
+            id: 21,
             event_name: "Talk",
             speaker: "Albert Joseph",
             summary: "",
@@ -259,6 +275,7 @@ const presetEvents = [
             color: "#ffec6e" //yellow
         },
         {
+            id: 22,
             event_name: "Awards",
             speaker: "",
             summary: "",

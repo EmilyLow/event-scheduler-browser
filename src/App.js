@@ -1,5 +1,5 @@
 import {useState, useEffect} from "react";
-import axios from 'axios';
+
 import styled from "styled-components";
 
 import Schedule from "./components/Schedule";
@@ -12,11 +12,8 @@ import Box from '@material-ui/core/Box';
 
 import presetEvents from "./presetEvents";
 
-/*
-  Note:
-  Stringify and parse turn a date object into a string when parsed back. This is not new.
 
-*/
+
 
 function App() {
   
@@ -28,21 +25,25 @@ function App() {
   });
  
   const [eventsList, setEventsList] = useState([]);
-
-
-  // const url = 'http://localhost:3001';
-
-  // const url = 'https://event-scheduler-backend-el.herokuapp.com';
+  const [idCounter, setIdCounter] = useState(23);
 
   useEffect(() => {
+
+    //Use to reset
+    //localStorage.setItem("events", JSON.stringify(presetEvents));
 
     //TODO: Add reset button
     if(localStorage.events === undefined || localStorage.events === JSON.stringify([])) {
       localStorage.setItem("events", JSON.stringify(presetEvents));
     }
+  
 
     if(localStorage.settings === undefined) {
       localStorage.setItem("settings", JSON.stringify(settings));
+    }
+
+    if(localStorage.idCounter === undefined) {
+      localStorage.setItem("idCounter", JSON.stringify(idCounter));
     }
 
 
@@ -51,7 +52,7 @@ function App() {
 
   }, []);
 
- 
+  //ToDo: Check for accuracy. 
   useEffect(() => {
     triggerSettingsReorder();
   }, [settings]);
@@ -60,13 +61,10 @@ function App() {
  const getSettings = () => {
  
     
-     let stored = JSON.parse(localStorage.settings);
+    let stored = JSON.parse(localStorage.settings);
 
-
-    let newSettings = {...stored, startDate: new Date(stored.startDate)};
-
-  
-     setSettings(newSettings);
+   let newSettings = {...stored, startDate: new Date(stored.startDate)};
+    setSettings(newSettings);
 
  }
 
@@ -74,10 +72,9 @@ function App() {
  const updateSettings =  (newSettings) => {
 
  
-  let id = newSettings.id;
+
 
   let renamed = {
-    id: id,
     day_number: newSettings.dayNum,
     hour_number: newSettings.hourNum,
     start_hour: newSettings.startHour,
@@ -92,30 +89,17 @@ function App() {
 
  };
 
- //Here
+
 const getEvents = () => {
+
   
   let data = JSON.parse(localStorage.events);
-  // console.log(data);
-
-  // let converted = convertToDate(data);
-
-  // console.log("Converted", converted);
 
    setEventsList(convertToDate(data));
-      
-  
-}
-
-//  const getWithoutUpdate = /* async */ () => {
-
-//   //?? await
-//   // let results = await JSON.parse(localStorage.events);
-//    let results = JSON.parse(localStorage.events);
+   setIdCounter(JSON.parse(localStorage.idCounter));
+};
 
 
-//    return results;
-//  }
 
  const deleteWithoutUpdate = async (event) => {
   let id = event.id;
@@ -134,18 +118,6 @@ const getEvents = () => {
 
  }
 
- //TODO: Do I need this with local storage?
- //This creates a promise to update the event, and does not actually update it directly. 
-//  const updateEvent = (event) => {
-//    let id = event.id;
-   
-
-//   return axios.put(url + "/events/" + id, event)
-//    .then((response) => {
-
-//    })
-//    .catch(error => console.error(`Error: ${error}`))
-//  }
 
  const deleteEvent = (event) => {
 
@@ -155,12 +127,11 @@ const getEvents = () => {
 
    for(let i = 0; i < currentEvents.length; i++) {
      if(currentEvents[i].id === id) {
-       Array.splice(i, 1);
+       currentEvents.splice(i, 1);
        break;
      }
    }
  
-   //TODO The order for this is wrong maybe? Depend on how reorder works with local storage
    localStorage.events = JSON.stringify(currentEvents);
   
     triggerDeleteReorder(event);
@@ -173,6 +144,7 @@ const getEvents = () => {
   let currentEvents = JSON.parse(localStorage.events);
 
   let formEvent = {
+    id: idCounter,
     event_name: event.title,
 
     speaker: event.speaker,
@@ -183,37 +155,41 @@ const getEvents = () => {
     color: getRandomColor()
   };
 
+  setIdCounter(formEvent.id + 1);
+  
+
   let newEvents = [...currentEvents, formEvent];
 
   localStorage.events = JSON.stringify(newEvents);
+  localStorage.idCounter = JSON.stringify(formEvent.id + 1)
+  
 
-  //Feeding it the right thing?
-  triggerReorder(newEvents);
+ triggerReorder(formEvent);
   
 }
 
 
   
    function  triggerReorder(newEvent) {
-   
-
+ 
     let formNewEvent = convertToDate([newEvent])[0];
-    let appEvents = convertToDate(localStorage.events);
+
+    let appEvents = convertToDate(JSON.parse(localStorage.events));
     
     let onDay = getEventsOnDay(appEvents, formNewEvent.start_time);
     let organized = organizeEvents(onDay);
 
-
     localStorage.events = JSON.stringify(organized);
 
+    let allEvents = appEvents.map(event => organized.find(ev => ev.id === event.id) || event);
 
-    setEventsList(organized);
-
+    localStorage.events = JSON.stringify(allEvents);
+    getEvents();
   }
 
+  //TODO: FIgure out if this is being called too easily
   async function triggerSettingsReorder() {
-
-
+    
 
       let winnowedList = await checkAndDeleteEvents(eventsList);
 
@@ -224,9 +200,11 @@ const getEvents = () => {
       localStorage.events = JSON.stringify(organized);
 
 
-      setEventsList(organized);
+      //Changed to ...
+      // setEventsList([...organized]);
 
-    
+      let newOrganized = [...organized];
+      setEventsList(newOrganized);
 
   }
 
@@ -307,9 +285,8 @@ const getEvents = () => {
 
   
     if(startDate < scheduleStartDay || endDate < scheduleStartDay) {
-      console.log(startDate);
-      console.log(scheduleStartDay);
-      console.log("False 3");
+      
+    
       return false;
     } else if(startDate > scheduleEndDay || endDate > scheduleEndDay) {
 
@@ -330,10 +307,22 @@ const getEvents = () => {
 
     let organized = organizeEvents(remainingOnDay);
 
+    for(let i = 0; i < organized.length; i++) {
+      for(let j = 0; j < formRemainingEvents.length; j++) {
+      
 
-    setEventsList(organized);
-   
-    localStorage.events = JSON.parse(organized);
+        if(formRemainingEvents[j].id === organized[i].id) {
+         
+          formRemainingEvents[j] = organized[i];
+          break;
+        }
+      }
+    }
+
+    localStorage.setItem("events", JSON.stringify(formRemainingEvents));
+ 
+    getEvents();
+
   }
 
 
@@ -355,9 +344,10 @@ const convertToDate = (rawEvents) => {
   return postEvents;
 }
 
+  //TODO: Replace with new algorithm
   //Note, assumes all events are on a single day
   function organizeEvents(rawEvents) {
-
+  
     if(rawEvents.length === 0) {
       return [];
     }
