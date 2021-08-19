@@ -12,7 +12,7 @@ import Box from '@material-ui/core/Box';
 
 import presetEvents from "./presetEvents";
 
-
+//TODO: Error is being caused by settings in Schedule.js changing from startDate to start_date
 
 
 function App() {
@@ -65,26 +65,29 @@ function App() {
 
    let newSettings = {...stored, startDate: new Date(stored.startDate)};
     setSettings(newSettings);
+    //console.log("Settings in get settings", newSettings);
 
  }
 
  //TODO: Test update and look at newSettings input
  const updateSettings =  (newSettings) => {
+  // console.log("Update settings called");
+  // console.log("New settings:", newSettings);
 
- 
 
+  // let renamed = {
+  //   day_number: newSettings.dayNum,
+  //   hour_number: newSettings.hourNum,
+  //   start_hour: newSettings.startHour,
 
-  let renamed = {
-    day_number: newSettings.dayNum,
-    hour_number: newSettings.hourNum,
-    start_hour: newSettings.startHour,
-
-    start_date: newSettings.startDate
-  }
+  //   start_date: newSettings.startDate
+  // }
 
     
-     setSettings(renamed);
-     localStorage.setItem("settings", JSON.stringify(renamed));
+  //console.log("Settings in update settings", renamed);
+    
+     setSettings(newSettings);
+     localStorage.setItem("settings", JSON.stringify(newSettings));
 
 
  };
