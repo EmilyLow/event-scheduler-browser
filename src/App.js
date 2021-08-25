@@ -14,6 +14,8 @@ import Button from '@material-ui/core/Button';
 import presetEvents from "./presetEvents";
 import presetSettings from "./presetSettings";
 
+import { StylesProvider } from '@material-ui/core/styles';
+
 
 
 
@@ -580,17 +582,18 @@ const convertToDate = (rawEvents) => {
 
   return (
     <LayoutDiv>
-      <Button onClick={triggerReset}>Reset</Button>
+      
       <ScheduleDiv>
-        <StyledH1>Event Scheduler</StyledH1>
+        <StyledH1>Flexible Calendar</StyledH1>
         <Schedule settings = {settings} eventsList = {eventsList} deleteEvent={deleteEvent}/>
       </ScheduleDiv>
-      {/* <FormDiv>
-        <SettingsForm settings = {settings} updateSettings = {updateSettings} />
-        <InputForm addEvent = {addEvent} settings={settings}/>
-      </FormDiv> */}
       
+     
         <FormDiv >
+          <StylesProvider injectFirst>
+            <MyButton onClick={triggerReset} variant="outlined" color="secondary">Reset</MyButton>
+          </StylesProvider>
+
             <Tabs value = {value} onChange={handleChange} indicatorColor={"primary"} textColor="primary">
 
               <Tab label="Events"/>
@@ -654,14 +657,13 @@ const ScheduleDiv = styled.div`
 
 const FormDiv = styled.div`
   margin-left: 80px;
-
   margin-top: 120px;
+
+  display: flex;
+  flex-direction: column;
+
 `;
 
-const FormDivDiv = styled.div`
- 
-
-`;
 
 const LayoutDiv = styled.div`
   display: flex;
@@ -669,3 +671,9 @@ const LayoutDiv = styled.div`
 
 
 `;
+
+const MyButton = styled(Button)`
+  margin: 0px 80px 20px 80px;
+
+`;
+
