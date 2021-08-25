@@ -10,10 +10,7 @@ function Schedule(props) {
 
     let {settings, eventsList, deleteEvent} = props;
 
-console.log("Schedule settings:", settings.startDate);
-    if(settings.startDate === undefined) {
-        console.log("props", props);
-    }
+
 
 const [anchorEl, setAnchorEl] = React.useState(null);
  const [popContents, setPopContents] = React.useState({});
@@ -73,8 +70,7 @@ const id = open ? "simple-popover" : undefined;
     let dayLabels = [];
     
     
-    // console.log("Pre-label date", settings.startDate);
-    //TODO: For some reason, startDate goes undefined here
+    
     let labelDate = new Date(settings.startDate.getTime());
 
     for(let i = 0; i < settings.dayNum; i++) {

@@ -9,37 +9,31 @@ import SettingsForm from "./components/SettingsForm";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 
 import presetEvents from "./presetEvents";
+import presetSettings from "./presetSettings";
 
-//TODO: Error is being caused by settings in Schedule.js changing from startDate to start_date
+
 
 
 function App() {
   
-  const [settings, setSettings] = useState({ 
-    dayNum: 3,
-    hourNum: 13,
-    startHour: 9,
-    startDate: new Date(2021, 4, 7)
-  });
+  const [settings, setSettings] = useState(presetSettings);
  
   const [eventsList, setEventsList] = useState([]);
   const [idCounter, setIdCounter] = useState(23);
 
   useEffect(() => {
 
-    //Use to reset
-    //localStorage.setItem("events", JSON.stringify(presetEvents));
 
-    //TODO: Add reset button
     if(localStorage.events === undefined || localStorage.events === JSON.stringify([])) {
       localStorage.setItem("events", JSON.stringify(presetEvents));
     }
   
 
     if(localStorage.settings === undefined) {
-      localStorage.setItem("settings", JSON.stringify(settings));
+      localStorage.setItem("settings", JSON.stringify(presetSettings));
     }
 
     if(localStorage.idCounter === undefined) {
@@ -52,7 +46,7 @@ function App() {
 
   }, []);
 
-  //ToDo: Check for accuracy. 
+
   useEffect(() => {
     triggerSettingsReorder();
   }, [settings]);
@@ -65,26 +59,13 @@ function App() {
 
    let newSettings = {...stored, startDate: new Date(stored.startDate)};
     setSettings(newSettings);
-    //console.log("Settings in get settings", newSettings);
+
 
  }
 
- //TODO: Test update and look at newSettings input
+
  const updateSettings =  (newSettings) => {
-  // console.log("Update settings called");
-  // console.log("New settings:", newSettings);
 
-
-  // let renamed = {
-  //   day_number: newSettings.dayNum,
-  //   hour_number: newSettings.hourNum,
-  //   start_hour: newSettings.startHour,
-
-  //   start_date: newSettings.startDate
-  // }
-
-    
-  //console.log("Settings in update settings", renamed);
     
      setSettings(newSettings);
      localStorage.setItem("settings", JSON.stringify(newSettings));
@@ -328,7 +309,16 @@ const getEvents = () => {
 
   }
 
+  function triggerReset() {
+   //console.log("Click");
+   localStorage.setItem("events", JSON.stringify(presetEvents));
+   localStorage.setItem("settings", JSON.stringify(presetSettings));
+   
+   getSettings();
+   getEvents();
+   //Add settings reset
 
+  }
 
 
 const convertToDate = (rawEvents) => {
@@ -590,6 +580,7 @@ const convertToDate = (rawEvents) => {
 
   return (
     <LayoutDiv>
+      <Button onClick={triggerReset}>Reset</Button>
       <ScheduleDiv>
         <StyledH1>Event Scheduler</StyledH1>
         <Schedule settings = {settings} eventsList = {eventsList} deleteEvent={deleteEvent}/>
