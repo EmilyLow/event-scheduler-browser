@@ -13,6 +13,7 @@ import Button from '@material-ui/core/Button';
 
 import presetEvents from "./presetEvents";
 import presetSettings from "./presetSettings";
+import organizeEvents from "./organization";
 
 import { StylesProvider } from '@material-ui/core/styles';
 
@@ -163,7 +164,9 @@ const getEvents = () => {
     let appEvents = convertToDate(JSON.parse(localStorage.events));
     
     let onDay = getEventsOnDay(appEvents, formNewEvent.start_time);
-    let organized = organizeEvents(onDay);
+
+    let dayNum = dateDiff(settings.startDate, newEvent.start_time);
+    let organized = organizeEvents(onDay, dayNum);
 
     localStorage.events = JSON.stringify(organized);
 
@@ -228,7 +231,8 @@ const getEvents = () => {
       currentDate.setDate(startDate.getDate() + i);
 
       let eventSubset = getEventsOnDay(unorganizedList, currentDate);
-      let organizedSubset = organizeEvents(eventSubset);
+
+      let organizedSubset = organizeEvents(eventSubset, i);
 
       allEvents = [...allEvents, ...organizedSubset];
     }
@@ -291,7 +295,8 @@ const getEvents = () => {
     
     let remainingOnDay = getEventsOnDay(formRemainingEvents, deletedEvent.start_time);
 
-    let organized = organizeEvents(remainingOnDay);
+    let dayNum = dateDiff(settings.startDate, deletedEvent.start_time);
+    let organized = organizeEvents(remainingOnDay, dayNum);
 
     for(let i = 0; i < organized.length; i++) {
       for(let j = 0; j < formRemainingEvents.length; j++) {
@@ -339,145 +344,9 @@ const convertToDate = (rawEvents) => {
   return postEvents;
 }
 
-  //TODO: Replace with new algorithm
-  //Note, assumes all events are on a single day
-  function organizeEvents(rawEvents) {
-  
-    if(rawEvents.length === 0) {
-      return [];
-    }
+ 
 
 
-   
-    let dayNum = dateDiff(settings.startDate, rawEvents[0].start_time);
-
-    let colOffset = 2;
-    
-    let baseColumn = dayNum * 12 + colOffset;
-
-    let cleanEvents = [];
-    rawEvents.forEach(event => {
-        let newEvent = {...event, start_col: 0, span: 0};
-        cleanEvents.push(newEvent);
-
-    });
-
-    let addedEvents = [];
-
-    for(let i = 0; i < cleanEvents.length; i++) {
-       
-        let intIndex = [];
-        for(let j = 0; j < addedEvents.length; j++) {
-            if(checkTimeInt(cleanEvents[i], addedEvents[j])) {
-                intIndex.push(j);
-            }
-        }
-     
-       
-        
-        //Length of intIndex is the number of intersections
-        if(intIndex.length === 0) {
-            cleanEvents[i].span = 12;
-            cleanEvents[i].start_col = baseColumn;
-            addedEvents.push(cleanEvents[i]);
-        } else {
-            let defaultSpan;
-            if(intIndex.length < 4) {
-              defaultSpan = 12/(intIndex.length +1);
-            } else if (intIndex.length < 6) {
-              defaultSpan = 2;
-            } else if (intIndex.length < 12) {
-              defaultSpan = 1;
-            } else {
-              defaultSpan = 0;
-              console.log("Error: No more than twelve events can intersect.");
-            }
-            
-
-             //Add new event to addedEvents, and add it's index to the list of intersections
-             //Once the current event is added, it is now one of the intersecting events
-             addedEvents.push(cleanEvents[i]);
-             intIndex.push(addedEvents.length-1)
-
-  
-             let slots = new Array(intIndex.length).fill(0);
-           
-             for(let j = 0; j < intIndex.length ; j++) {
-
-               
-                let addedIndex = intIndex[j];
-                //Current intersecting event that is being placed
-                let intEvent = addedEvents[addedIndex];
-
-
-                //Makes the span smaller, but not larger
-                if(!(intEvent.span > 0 && intEvent.span < defaultSpan)) {
-                    intEvent.span = defaultSpan;
-                }
-
-
-              for(let x = 0; x < slots.length; x++) {
-                  if(slots[x] === 0) {
-                      
-                      let blocked = false;
-
-                      let origCol = intEvent.start_col;
-                      intEvent.start_col = baseColumn + x * defaultSpan;
-                  
-                      for(let y = 0; y < addedIndex; y++) {
-                        if(checkPhysicalInt(addedEvents[y], intEvent)) {
-                           blocked = true;
-                        }
-                    }
-                    
-                    if (!blocked) {
-                        //Set slot to full
-                        slots[x] = 1;
-
-                        break;
-                        
-                    } else if (x === slots.length -1) {
-                        console.log("Error, found no open slot");
-                     
-                        intEvent.start_col = origCol;
-                    } else {
-                        intEvent.start_col = origCol;
-                    }
-
-                  }
-              }
-            }
-         
-        }
-    }
-    return addedEvents;
-  }
-
-  //This checks for an intersection in grid placement. 
-  function checkPhysicalInt(event1, event2) {
-
-    //Error check
-    if(event1.start_col === 0 || event2.start_col === 0 || event1.span === 0 || event2.span === 0) {
-        console.log("Error! Undefined physical placement");
-    }
-
-    if(checkTimeInt(event1, event2) === false) {
-        return false;
-    } else {
-        //Subtracted by 0.1 so shared boundaries don't count as intersection.
-        let end_col1 = event1.start_col + event1.span - 0.1;
-        let end_col2 = event2.start_col + event2.span - 0.1;
-
-        let maxStart = max(event1.start_col, event2.start_col);
-        let minEnd = min(end_col1, end_col2);
-
-        if(maxStart <= minEnd) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-  }
 
   //This checks for an intersection in time, aka vertical overlap
   function checkTimeInt(event1, event2) {
