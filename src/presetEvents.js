@@ -39,6 +39,7 @@ const presetEvents = [
           span: 6,
           color: "#F3B0A8" //pink
       },
+   
       {
            id: 4,
             event_name: "Merchants",
@@ -46,7 +47,7 @@ const presetEvents = [
             summary: "Curabitur ac egestas tortor",
             location: "Hotel Ballroom",
             start_time: new Date(2021, 4, 8, 9, 30).toISOString().replace('T', ' '),
-            end_time: new Date(2021, 4, 8, 14, 30).toISOString().replace('T', ' '),
+            end_time: new Date(2021, 4, 8, 15, 0).toISOString().replace('T', ' '),
             
             start_col: 14,
             span: 6,
