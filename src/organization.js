@@ -35,9 +35,12 @@ function organizeEvents(rawEvents, dayNum) {
 
         let currentEvent = sortedEvents[i];
 
+        //TODO: I believe the error is here, and that it isn't forming new groups correctly
+
         //Checks to see if current event overlaps with previous group of intersecting events.
         //If not, it finalizes positions of previous group and starts new group.
         if(lastEventEnd !== null && new Date (currentEvent.start_time) > lastEventEnd) {
+            console.log(lastEventEnd);
             
             //Finalizes the positions of the previous group
             packEvents(columns, dayNum);

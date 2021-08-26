@@ -129,7 +129,7 @@ const getEvents = () => {
  const  addEvent = (event) => {
  
   let currentEvents = JSON.parse(localStorage.events);
-
+  
   let formEvent = {
     id: idCounter,
     event_name: event.title,
