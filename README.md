@@ -1,4 +1,4 @@
-# Event Scheduler
+# Event Scheduler / Flexible Calendar
 
 Hosted [here](). 
 
